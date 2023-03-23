@@ -1,1 +1,18 @@
-
+const abortController = new AbortController() ;
+const signal = abortController.signal;
+fetch('https://api.com/data', { signal })
+.then (response => response. json () )
+.then (data => {
+doStuff (data);
+})
+.catch(error => {
+if(error.name === 'AbortError'). {
+console.error ('Fetch request timed out');
+showUserTimeout ();
+}else {
+console.error('Fetch failed:', error); showUserError;
+}
+}E
+setTimeout ( () => {
+abortController.abort);
+}, 5000);
