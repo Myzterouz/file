@@ -16,3 +16,6 @@ console.error('Fetch failed:', error); showUserError;
 setTimeout ( () => {
 abortController.abort);
 }, 5000);
+
+
+https://stackoverflow.com/questions/56376748/messagebox-in-material-design-wpf-c-sharp/60302166#60302166
