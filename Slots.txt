@@ -1,0 +1,380 @@
+﻿<UserControl x:Class="StockCase.View.Slots"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:StockCase.ViewModel"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Margin="10">
+        <Grid.Resources>
+            <Style TargetType="Border">
+                <Setter Property="BorderBrush" Value="Green"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Margin" Value="2"/>
+                <Setter Property="Padding" Value="1"/>
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="CornerRadius" Value="5"/>
+            </Style>
+            <Style TargetType="TextBlock">
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="FontSize" Value="18"/>
+            </Style>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.25*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="0.25*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="0.25*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Labels and TextBox controls for each slot -->
+        <Border Grid.Row="0" Grid.Column="0">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="1"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="0" Grid.Column="1">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[1].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="0">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="2"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="1">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[2].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="2" Grid.Column="0">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="3"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="2" Grid.Column="1">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[3].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="3" Grid.Column="0">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="4"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="3" Grid.Column="1">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[4].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="4" Grid.Column="0">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="5"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="4" Grid.Column="1">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[5].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="5" Grid.Column="0">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="6"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="5" Grid.Column="1">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[6].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="6" Grid.Column="0">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="7"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="6" Grid.Column="1">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[7].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="7" Grid.Column="0">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="8"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="7" Grid.Column="1">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[8].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="8" Grid.Column="0">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="9"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="8" Grid.Column="1">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[9].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="9" Grid.Column="0">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="10"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="9" Grid.Column="1">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[10].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <!-- Labels and TextBox controls for each slot -->
+        <Border Grid.Row="0" Grid.Column="2">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="11"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="0" Grid.Column="3">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[11].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="2">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="12"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="3">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[12].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="2" Grid.Column="2">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="13"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="2" Grid.Column="3">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[13].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="3" Grid.Column="2">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="14"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="3" Grid.Column="3">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[14].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="4" Grid.Column="2">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="15"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="4" Grid.Column="3">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[15].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="5" Grid.Column="2">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="16"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="5" Grid.Column="3">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[16].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="6" Grid.Column="2">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="17"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="6" Grid.Column="3">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[17].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="7" Grid.Column="2">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="18"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="7" Grid.Column="3">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[18].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="8" Grid.Column="2">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="19"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="8" Grid.Column="3">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[19].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="9" Grid.Column="2">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="20"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="9" Grid.Column="3">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[20].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <!-- Labels and TextBox controls for each slot -->
+        <Border Grid.Row="0" Grid.Column="4">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="21"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="0" Grid.Column="5">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[21].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="4">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="22"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="5">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[22].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="2" Grid.Column="4">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="23"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="2" Grid.Column="5">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[23].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="3" Grid.Column="4">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="24"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="3" Grid.Column="5">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[24].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="4" Grid.Column="4">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="25"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="4" Grid.Column="5">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[25].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="5" Grid.Column="4">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="26"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="5" Grid.Column="5">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[26].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="6" Grid.Column="4">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="27"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="6" Grid.Column="5">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[27].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="7" Grid.Column="4">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="28"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="7" Grid.Column="5">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[28].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="8" Grid.Column="4">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="29"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="8" Grid.Column="5">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[29].Number}"/>
+            </Viewbox>
+        </Border>
+
+        <Border Grid.Row="9" Grid.Column="4">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="30"/>
+            </Viewbox>
+        </Border>
+        <Border Grid.Row="9" Grid.Column="5">
+            <Viewbox Stretch="Uniform">
+                <TextBlock Text="{Binding Scan[30].Number}"/>
+            </Viewbox>
+        </Border>
+    </Grid>
+</UserControl>

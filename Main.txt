@@ -1,0 +1,58 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using StockCase.View;
+using StockCase.ViewModel;
+using StockCase.Model;
+
+namespace StockCase
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        public StockCaseViewModel GetFunc = new StockCaseViewModel();
+        public MainWindow()
+        {
+            InitializeComponent();
+            WindowState = WindowState.Maximized;
+            Target.Content = new Slots();
+        }
+
+        private void InputTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                string input = InputTextBox.Text;
+                if (input == "") return;
+                Scanned.Items.Add(input);
+                InputTextBox.Text = string.Empty;
+                List<MyList> units = new List<MyList>();
+                for (int i = 0; i < Scanned.Items.Count; i++)
+                {
+                    string Number = Scanned.Items[i].ToString();
+                    units.Add(new MyList { Number = Number });
+                }
+                StockCaseViewModel GetFunc = new StockCaseViewModel();
+                GetFunc.Scan = GetFunc.Display(units);
+                Target.DataContext = GetFunc;
+                Target.Content = new Slots();
+                if (Scanned.Items.Count == 30) Scanned.Items.Clear();
+
+            }
+        }
+
+    }
+}

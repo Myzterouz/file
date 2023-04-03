@@ -1,0 +1,36 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using StockCase.Model;
+
+namespace StockCase.ViewModel
+{
+    public class StockCaseViewModel
+    {
+        public List<MyList> Scan { get; set; }
+
+        public List<MyList> Display(List<MyList> list)
+        {
+            List<MyList> Insert = new List<MyList>
+            {
+                new MyList { Number = "", Status = "" }
+            };
+            foreach (var unit in list)
+            {
+                Insert.Add(new MyList { Number = unit.Number, Status = "" });
+            }
+            if (list.Count <=30)
+            {
+                int fill = 30 - list.Count;
+                for (int i = 0; i < fill; i++)
+                {
+                    Insert.Add(new MyList { Number = "", Status = "" });
+                }
+            }
+            return Insert.ToList();
+        }
+    }
+}
