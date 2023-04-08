@@ -7,7 +7,8 @@
         "PartName": "IC1009",
         "BGA":0,
         "Mapping":1,
-        "ERNumber": ""
+        "ERNumber": "",
+        "INFO": "MB,TEST,BOARD,DUMMY,MODEL,FORM"
     },
     {
         "left": 443,
@@ -17,7 +18,8 @@
         "PartName": "IC1002",
         "BGA":0,
         "Mapping":1,
-        "ERNumber": ""
+        "ERNumber": "",
+        "INFO": "MB,TEST,BOARD,DUMMY,MODEL,FORM"
     },
     {
         "left": 644,
@@ -27,7 +29,8 @@
         "PartName": "IC1003",
         "BGA":0,
         "Mapping":1,
-        "ERNumber": ""
+        "ERNumber": "",
+        "INFO": "MB,TEST,BOARD,DUMMY,MODEL,FORM"
     },
     {
         "left": 1024,
@@ -37,7 +40,8 @@
         "PartName": "IC1004",
         "BGA":0,
         "Mapping":1,
-        "ERNumber": ""
+        "ERNumber": "",
+        "INFO": "MB,TEST,BOARD,DUMMY,MODEL,FORM"
     },
     {
         "left": 58,
@@ -47,6 +51,7 @@
         "PartName": "IC1005",
         "BGA":0,
         "Mapping":1,
-        "ERNumber": ""
+        "ERNumber": "",
+        "INFO": "MB,TEST,BOARD,DUMMY,MODEL,FORM"
     }
 ]
