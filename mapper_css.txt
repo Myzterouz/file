@@ -1,0 +1,60 @@
+html, body {
+    font-family: 'Consolas' !important;
+  }
+
+body {
+    width: 1350px !important;
+    height: 620px !important;
+}
+
+svg {
+    width: 2rem !important;
+    height: 2rem !important;
+}
+
+#errorsvg, #mapsvg {
+    width: 8rem !important;
+    height: 10rem !important;
+    transform: translateY(-6rem);
+    animation: bounce 0.5s;
+    animation-direction:alternate-reverse !important;
+    animation-timing-function: cubic-bezier(.5, 0.05, 1, .5);
+    animation-iteration-count: infinite;
+}
+
+#personsvg {
+    width: 8rem !important;
+    height: 10rem !important;
+    transform: translateY(-6rem);
+}
+
+@keyframes bounce {
+    from {
+        transform: translate3d(0, -5rem, 0);
+    }
+    to {
+        transform: translate3d(0, -10rem, 0);
+    }
+}
+
+.v-4r {
+    height: 5rem !important;
+}
+
+#boardmapper {
+    cursor:pointer !important ;
+}
+
+.maptablediv {
+    height: 8rem !important;
+}
+
+#MapTable > tbody > tr > td {
+    padding: 0.1rem !important;
+    margin: 0rem !important;
+}
+
+.form-control:focus,.form-select:focus {
+    box-shadow: none !important;
+}
+  
