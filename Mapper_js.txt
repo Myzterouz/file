@@ -120,7 +120,7 @@ if(saveModaldiv){
     });
 }
 
-function LoadBoardViewer(img_path,coor_arr){    
+function LoadBoardViewer(img_path,data_arr){    
     //Sample Json Needed
     // "top": 443,
     // "left": 24,
@@ -129,7 +129,8 @@ function LoadBoardViewer(img_path,coor_arr){
     // "PartName": "IC1002",
     // "BGA":0,
     // "Mapping":1,
-    // "ERNumber": ""
+    // "ERNumber": "",
+    // "INFO": "MB,TEST,BOARD,DUMMY,MODEL,FORM"
     // Create an image object
     var img = new Image();
     // Set the source of the image
@@ -142,9 +143,14 @@ function LoadBoardViewer(img_path,coor_arr){
         boardviewerctx.fillStyle = fillStyle;
         boardviewerctx.strokeStyle = strokeStyle;
         boardviewerctx.lineWidth = lineWidth;
+        const info_arr = (data_arr[0].INFO).split(',');
+        for (let i = 0; i < info_arr.length; i++) {
+            const info = info_arr[i];
+            document.getElementById('INFO' + (i+1)).innerHTML = info;
+        }
         // Loop through the rectangles array and draw each rectangle
         for (let i = 0; i <= 4; i++) {
-            const rect = coor_arr[i];
+            const rect = data_arr[i];
             var childElement = document.getElementById("NG" + (i+1));
             var parentElement = childElement.parentNode;
             if(rect === undefined){
@@ -177,17 +183,16 @@ function LoadBoardViewer(img_path,coor_arr){
     img.onerror = function() {
         // Clear the boardviewer
         boardviewerctx.clearRect(0, 0, boardviewer.width, boardviewer.height);        
-        // Draw "no available image" message
+        // Draw "No Available Image" message
         boardviewerctx.fillStyle = 'red';
-        boardviewerctx.font = '30px Consolas';
+        boardviewerctx.font = '3rem Consolas';
         boardviewerctx.textAlign = 'center';
         boardviewerctx.textBaseline = 'middle';
-        if(!img_path.includes('/')){
-            let ErrorMessage = img_path;
-            boardviewerctx.fillText(ErrorMessage, boardviewer.width/2, boardviewer.height/2);
-        }else{                
-            boardviewerctx.fillText('No available image', boardviewer.width/2, boardviewer.height/2);
+        let ErrorMessage = !img_path.includes('/') ? img_path : 'No Available Image'; 
+        if(img_path.includes('/')){
+            InvalidItems('No Available Image');
         }
+        boardviewerctx.fillText(ErrorMessage, boardviewer.width/2, boardviewer.height/2);
     };
 }
 
@@ -202,9 +207,9 @@ function LoadBoardMapper(img_path,coor_arr){
     if(img_path.includes(' ')){
         // Clear the boardmapper
         boardmapperctx.clearRect(0, 0, boardmapper.width, boardmapper.height);        
-        // Draw "no available image" message
+        // Draw "No Available Image" message
         boardmapperctx.fillStyle = 'red';
-        boardmapperctx.font = '30px Consolas';
+        boardmapperctx.font = '3rem Consolas';
         boardmapperctx.textAlign = 'center';
         boardmapperctx.textBaseline = 'middle';
         boardmapperctx.fillText('Please Select your desire modal', boardmapper.width/2, boardmapper.height/2);
@@ -241,12 +246,12 @@ function LoadBoardMapper(img_path,coor_arr){
     MapperbackgroundImage.onerror = function() {
         // Clear the boardmapper
         boardmapperctx.clearRect(0, 0, boardmapper.width, boardmapper.height);        
-        // Draw "no available image" message
+        // Draw "No Available Image" message
         boardmapperctx.fillStyle = 'red';
-        boardmapperctx.font = '30px Consolas';
+        boardmapperctx.font = '3rem Consolas';
         boardmapperctx.textAlign = 'center';
         boardmapperctx.textBaseline = 'middle';
-        boardmapperctx.fillText('No available image', boardmapper.width/2, boardmapper.height/2);
+        boardmapperctx.fillText('No Available Image', boardmapper.width/2, boardmapper.height/2);
     };
     // Set the fill style to transparent and the stroke style to red
     boardmapperctx.fillStyle = fillStyle;
@@ -377,9 +382,9 @@ if (mapmodel){
             MapperbackgroundImage = new Image();
             // Clear the boardmapper
             boardmapperctx.clearRect(0, 0, boardmapper.width, boardmapper.height);        
-            // Draw "no available image" message
+            // Draw "No Available Image" message
             boardmapperctx.fillStyle = 'red';
-            boardmapperctx.font = '30px Consolas';
+            boardmapperctx.font = '3rem Consolas';
             boardmapperctx.textAlign = 'center';
             boardmapperctx.textBaseline = 'middle';
             boardmapperctx.fillText('Please Select your desire modal', boardmapper.width/2, boardmapper.height/2);
@@ -428,13 +433,14 @@ if(Serial){
                     errorModal.show();
                     Serial.focus();
                     Serial.select();
-                    InvalidItems('Invalid');
                     LoadBoardViewer('Invalid Serial Number');
+                    InvalidItems('Invalid');
                     return;
                 }else{
                     let filePath = "/file.json";
                     loadJSONFile(filePath)
                     .then(data => {
+                        // SetInfo();   
                         const InvalidMapping = data.filter(obj => obj.Mapping === 0);
                         if(InvalidMapping.length > 0){
                             let PartName = InvalidMapping.map(item => item.PartName);
@@ -445,7 +451,7 @@ if(Serial){
                             InvalidItems('Not Yet Map');
                             return;
                         }    
-                        let img = local_path + 'LowCapa_DB_XXX_2.5.jpg';                        
+                        let img = local_path + 'HighCapa_MB_XXX_2.5.jpg';                   
                         LoadBoardViewer(img,data)
                     })
                     .catch(error => {
@@ -598,7 +604,7 @@ function ClearItems() {
         parentElement.style.display = '';
     }
     for (let i = 1; i <= 6; i++) {
-        document.getElementById('INFO' + i).innerHTML = '--------------'
+        document.getElementById('INFO' + i).innerHTML = '--------------';
     }
     document.getElementById('BGA').innerHTML = '--- ---';
 }
@@ -619,25 +625,25 @@ function InvalidItems(text) {
 function GetModelFromImgPath(){
     return new Promise((resolve, reject) => {
         $.ajax({
-        url: '/Board',
-        type: 'GET',
-        dataType: 'json',
-        success: function(response) {
-            response.forEach(function(file) {
-                const extension = file.substring(file.lastIndexOf('.') + 1);
-                if('jpgpng'.includes(extension)){
-                    const option = document.createElement('option');
-                    option.value = file;
-                    option.text = file.replaceAll('.'+extension,'');
-                    mapmodel.appendChild(option);
-                }
-            });
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.error('Error retrieving file list:', errorThrown);
-            errorModalBody.innerHTML = errorThrown;
-            errorModal.show();
-        }
+            url: '/Board',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                response.forEach(function(file) {
+                    const extension = file.substring(file.lastIndexOf('.') + 1);
+                    if('jpgpng'.includes(extension)){
+                        const option = document.createElement('option');
+                        option.value = file;
+                        option.text = file.replaceAll('.'+extension,'');
+                        mapmodel.appendChild(option);
+                    }
+                });
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error retrieving file list:', errorThrown);
+                errorModalBody.innerHTML = errorThrown;
+                errorModal.show();
+            }
         });
         resolve('Success!');
     });
