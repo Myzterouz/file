@@ -1,0 +1,52 @@
+[
+    {
+        "left": 187,
+        "top": 52,
+        "right": 419,
+        "bottom": 139,
+        "PartName": "IC1009",
+        "BGA":0,
+        "Mapping":1,
+        "ERNumber": ""
+    },
+    {
+        "left": 443,
+        "top": 24,
+        "right": 617,
+        "bottom": 127,
+        "PartName": "IC1002",
+        "BGA":0,
+        "Mapping":1,
+        "ERNumber": ""
+    },
+    {
+        "left": 644,
+        "top": 25,
+        "right": 814,
+        "bottom": 131,
+        "PartName": "IC1003",
+        "BGA":0,
+        "Mapping":1,
+        "ERNumber": ""
+    },
+    {
+        "left": 1024,
+        "top": 86,
+        "right": 1201,
+        "bottom": 340,
+        "PartName": "IC1004",
+        "BGA":0,
+        "Mapping":1,
+        "ERNumber": ""
+    },
+    {
+        "left": 58,
+        "top": 33,
+        "right": 169,
+        "bottom": 376,
+        "PartName": "IC1005",
+        "BGA":0,
+        "Mapping":1,
+        "ERNumber": ""
+    }
+]
