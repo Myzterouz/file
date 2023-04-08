@@ -1,0 +1,704 @@
+$(document).ready(function() {
+
+
+
+      
+    if(boardmapper){
+        Mapperdefaultsetup();
+    }
+
+    if(boardviewer){
+        LoadBoardViewer('SCAN SERIAL NUMBER TO PROCEED');
+    }
+// Call the function
+
+
+
+
+
+
+    
+    // if(boardmapper){
+    //     GetModelFromImgPath();
+    // }
+    
+// async function hideloop() {
+//     for (let i = 1; i <= 5; i++) {
+//       await new Promise(resolve => setTimeout(() => {
+//         console.log(i + '/' + 5);
+//         resolve();
+//       }, 1000));
+//     }
+//   }
+// async function executeFunctions() { 
+//     loadingModal.show();       
+    
+//     await hideloop(); 
+
+//     console.log('Document is ready');
+//     loadingModal.hide();
+// }
+
+// executeFunctions();
+
+    
+    // let img = '/Board/F_OIP.jpg'; 
+    // if(boardviewer != null) LoadBoardViewer('SCAN SERIAL NUMBER TO PROCEED');
+    
+    // if(boardmapper != null) LoadBoardMapper('SELECT ITEM');
+
+});
+// Varialable adn place holder setup
+var boardviewer = document.getElementById('boardviewer');
+var boardmapper = document.getElementById('boardmapper');
+// Get boardviewer context
+var boardviewerctx = null;
+// Get boardmapper context
+var boardmapperctx = null;    
+// Initialize variables for rectangle dimensions
+var startX, startY, endX, endY;
+// Initialize variable to track if a rectangle is currently being drawn
+var isDrawing = false;
+// Load the background image
+var MapperbackgroundImage = new Image();  
+
+var Serial = document.getElementById('Serial');
+var loginModaldiv = document.getElementById('loginModal');
+var errorModaldiv = document.getElementById('errorModal');
+var saveModaldiv = document.getElementById('saveModal');
+var loadingModaldiv = document.getElementById('loadingModal');
+var loginModal = loginModaldiv?new bootstrap.Modal(loginModaldiv):null;
+var errorModal = errorModaldiv?new bootstrap.Modal(errorModaldiv):null;
+var saveModal = saveModaldiv?new bootstrap.Modal(saveModaldiv):null;
+var loadingModal = loadingModaldiv?new bootstrap.Modal(loadingModaldiv):null;
+var errorModalBody = document.querySelector('#errorModal .modal-body');
+var loginForm = document.getElementById('loginForm');
+var saveForm = document.getElementById('saveForm');
+var mapmodel = document.getElementById('mapmodel');
+var cornerRadius = 3;
+var lineWidth = 5;
+var strokeStyle = 'red';
+var fillStyle = 'rgba(255, 0, 0, 0.1)'
+// Initialize variables for saveform dimensions
+var x_axis, y_axis, w_axis, h_axis, capatype, boardtype, modeltype, formtype;
+
+
+
+const rectangles = [
+    { top: 187, left: 52, right: 419, bottom: 139, PartName: "IC1001" },
+    { top: 443, left: 24, right: 617, bottom: 127, PartName: "IC1002" },
+    { top: 644, left: 25, right: 814, bottom: 131, PartName: "IC1003" },
+    { top: 1024, left: 86, right: 1201, bottom: 340, PartName: "IC1004" },
+    { top: 58, left: 33, right: 169, bottom: 376, PartName: "IC1005" }
+  ];
+
+
+
+  
+
+if(loginModaldiv){
+    loginModaldiv.addEventListener('hidden.bs.modal', event => {
+        loginForm.reset();
+        Serial.focus();
+        Serial.select();
+    });
+}
+
+if(errorModaldiv){
+    errorModaldiv.addEventListener('hidden.bs.modal', event => {
+        if(Serial){
+            Serial.focus();
+            Serial.select();
+        }
+    });
+}
+
+if(saveModaldiv){
+    saveModaldiv.addEventListener('hidden.bs.modal', event => {       
+        redrawCanvas();
+        saveForm.reset();
+    });
+}
+
+function LoadBoardViewer(img_path,coor_arr){    
+    //Sample Json Needed
+    // "top": 443,
+    // "left": 24,
+    // "right": 617,
+    // "bottom": 127,
+    // "PartName": "IC1002",
+    // "BGA":0,
+    // "Mapping":1,
+    // "ERNumber": ""
+    // Create an image object
+    var img = new Image();
+    // Set the source of the image
+    img.src = img_path;
+    // Wait for the image to load before drawing it to the boardviewer
+    img.onload = function() {
+        // Draw the image onto the boardviewer
+        boardviewerctx.drawImage(img, 0, 0,boardviewer.width,boardviewer.height);
+        // Draw the rectangle with a red border and transparent fill        
+        boardviewerctx.fillStyle = fillStyle;
+        boardviewerctx.strokeStyle = strokeStyle;
+        boardviewerctx.lineWidth = lineWidth;
+        // Loop through the rectangles array and draw each rectangle
+        for (let i = 0; i <= 4; i++) {
+            const rect = coor_arr[i];
+            var childElement = document.getElementById("NG" + (i+1));
+            var parentElement = childElement.parentNode;
+            if(rect === undefined){
+                parentElement.style.display = "none";
+            }else{
+                const startX = rect.left;
+                const startY = rect.top;
+                const endX = rect.right;
+                const endY = rect.bottom;
+                boardviewerctx.beginPath();
+                boardviewerctx.moveTo(startX + cornerRadius, startY);
+                boardviewerctx.lineTo(endX - cornerRadius, startY);
+                boardviewerctx.arc(endX - cornerRadius, startY + cornerRadius, cornerRadius, -Math.PI / 2, 0);
+                boardviewerctx.lineTo(endX, endY - cornerRadius);
+                boardviewerctx.arc(endX - cornerRadius, endY - cornerRadius, cornerRadius, 0, Math.PI / 2);
+                boardviewerctx.lineTo(startX + cornerRadius, endY);
+                boardviewerctx.arc(startX + cornerRadius, endY - cornerRadius, cornerRadius, Math.PI / 2, Math.PI);
+                boardviewerctx.lineTo(startX, startY + cornerRadius);
+                boardviewerctx.arc(startX + cornerRadius, startY + cornerRadius, cornerRadius, Math.PI, -Math.PI / 2);
+                boardviewerctx.closePath();
+                boardviewerctx.fill();
+                boardviewerctx.stroke();
+                childElement.innerHTML = rect.PartName;
+                parentElement.style.display = "";
+            }
+            document.getElementById('BGA').innerHTML = rect.BGA?'BGA':'NON BGA'
+        }
+    };
+    // Handle errors when loading the image
+    img.onerror = function() {
+        // Clear the boardviewer
+        boardviewerctx.clearRect(0, 0, boardviewer.width, boardviewer.height);        
+        // Draw "no available image" message
+        boardviewerctx.fillStyle = 'red';
+        boardviewerctx.font = '30px Consolas';
+        boardviewerctx.textAlign = 'center';
+        boardviewerctx.textBaseline = 'middle';
+        if(!img_path.includes('/')){
+            let ErrorMessage = img_path;
+            boardviewerctx.fillText(ErrorMessage, boardviewer.width/2, boardviewer.height/2);
+        }else{                
+            boardviewerctx.fillText('No available image', boardviewer.width/2, boardviewer.height/2);
+        }
+    };
+}
+
+if(boardviewer){
+    boardviewer.width = 1310;
+    boardviewer.height = 425;
+    boardviewerctx = boardviewer.getContext('2d')
+}
+
+function LoadBoardMapper(img_path,coor_arr){
+    // alert(img_path);
+    if(img_path.includes(' ')){
+        // Clear the boardmapper
+        boardmapperctx.clearRect(0, 0, boardmapper.width, boardmapper.height);        
+        // Draw "no available image" message
+        boardmapperctx.fillStyle = 'red';
+        boardmapperctx.font = '30px Consolas';
+        boardmapperctx.textAlign = 'center';
+        boardmapperctx.textBaseline = 'middle';
+        boardmapperctx.fillText('Please Select your desire modal', boardmapper.width/2, boardmapper.height/2);
+        return;
+    }
+    MapperbackgroundImage.src = img_path;
+    MapperbackgroundImage.onload = function() {
+        // Draw the image on the boardmapper
+        boardmapperctx.drawImage(MapperbackgroundImage, 0, 0, boardmapper.width, boardmapper.height);
+        
+        // Loop through the rectangles array and draw each rectangle
+        for (let i = 0; i < coor_arr.length; i++) {
+            const rect = coor_arr[i];
+            const startX = rect.left;
+            const startY = rect.top;
+            const endX = rect.right;
+            const endY = rect.bottom;
+            boardmapperctx.beginPath();
+            boardmapperctx.moveTo(startX + cornerRadius, startY);
+            boardmapperctx.lineTo(endX - cornerRadius, startY);
+            boardmapperctx.arc(endX - cornerRadius, startY + cornerRadius, cornerRadius, -Math.PI / 2, 0);
+            boardmapperctx.lineTo(endX, endY - cornerRadius);
+            boardmapperctx.arc(endX - cornerRadius, endY - cornerRadius, cornerRadius, 0, Math.PI / 2);
+            boardmapperctx.lineTo(startX + cornerRadius, endY);
+            boardmapperctx.arc(startX + cornerRadius, endY - cornerRadius, cornerRadius, Math.PI / 2, Math.PI);
+            boardmapperctx.lineTo(startX, startY + cornerRadius);
+            boardmapperctx.arc(startX + cornerRadius, startY + cornerRadius, cornerRadius, Math.PI, -Math.PI / 2);
+            boardmapperctx.closePath();
+            boardmapperctx.fill();
+            boardmapperctx.stroke();
+        }
+    };
+    // Handle errors when loading the image
+    MapperbackgroundImage.onerror = function() {
+        // Clear the boardmapper
+        boardmapperctx.clearRect(0, 0, boardmapper.width, boardmapper.height);        
+        // Draw "no available image" message
+        boardmapperctx.fillStyle = 'red';
+        boardmapperctx.font = '30px Consolas';
+        boardmapperctx.textAlign = 'center';
+        boardmapperctx.textBaseline = 'middle';
+        boardmapperctx.fillText('No available image', boardmapper.width/2, boardmapper.height/2);
+    };
+    // Set the fill style to transparent and the stroke style to red
+    boardmapperctx.fillStyle = fillStyle;
+    boardmapperctx.strokeStyle = strokeStyle;
+    boardmapperctx.lineWidth = lineWidth;
+} 
+
+if(boardmapper){
+    let Item = mapmodel.value;
+    boardmapper.width = 1310;
+    boardmapper.height = 425;
+    boardmapperctx = boardmapper.getContext('2d');
+    // Add mousedown event listener to boardmapper
+    boardmapper.addEventListener('mousedown', function(event) {
+        Item = mapmodel.value;
+        if(!Item.includes(' ')){
+            // Get coordinates of click relative to boardmapper
+            startX = event.offsetX;
+            startY = event.offsetY;
+            // Set isDrawing to true to indicate that a rectangle is being drawn
+            isDrawing = true;
+        }
+    });
+    // Add mousemove event listener to boardmapper
+    boardmapper.addEventListener('mousemove', function(event) {
+        Item = mapmodel.value;
+        // If a rectangle is being drawn, update the end coordinates and redraw the boardmapper
+        if (isDrawing && !Item.includes(' ')) {
+            endX = event.offsetX;
+            endY = event.offsetY;
+            redrawCanvas();
+        }
+    });
+    // Add mouseup event listener to boardmapper
+    boardmapper.addEventListener('mouseup', function(event) {
+        Item = mapmodel.value;
+        // If a rectangle is being drawn, update the end coordinates, redraw the boardmapper, and show an alert
+        if (isDrawing && !Item.includes(' ')) {
+            endX = event.offsetX;
+            endY = event.offsetY;
+            redrawCanvas();
+            isDrawing = false;
+            let Item = (mapmodel.value);
+            const extension = Item.substring(Item.lastIndexOf('.') + 1);
+            Item = Item.replaceAll('.'+ extension,'');
+            Item = Item.split('_');
+            x_axis.value = startX;
+            y_axis.value = startY;
+            w_axis.value = endX;
+            h_axis.value = endY;
+            capatype.value = Item[0];
+            boardtype.value = Item[1];
+            modeltype.value = Item[2];
+            formtype.value = Item[3];
+            saveModal.show();
+        }
+    });
+}
+
+// Redraw the boardmapper with the current rectangle
+function redrawCanvas() {
+    // Draw the background image
+    boardmapperctx.drawImage(MapperbackgroundImage, 0, 0, boardmapper.width, boardmapper.height);    
+    // Draw the rectangle with a red border and transparent fill
+    var width = endX - startX;
+    var height = endY - startY;
+    boardmapperctx.beginPath();
+    boardmapperctx.moveTo(startX + cornerRadius, startY);
+    boardmapperctx.lineTo(startX + width - cornerRadius, startY);
+    boardmapperctx.arcTo(endX, startY, endX, startY + cornerRadius, cornerRadius);
+    boardmapperctx.lineTo(endX, startY + height - cornerRadius);
+    boardmapperctx.arcTo(endX, endY, endX - cornerRadius, endY, cornerRadius);
+    boardmapperctx.lineTo(startX + cornerRadius, endY);
+    boardmapperctx.arcTo(startX, endY, startX, endY - cornerRadius, cornerRadius);
+    boardmapperctx.lineTo(startX, startY + cornerRadius);
+    boardmapperctx.arcTo(startX, startY, startX + cornerRadius, startY, cornerRadius);
+    boardmapperctx.closePath();
+    boardmapperctx.fill();
+    boardmapperctx.stroke();
+    // boardmapperctx.fillRect(startX, startY, width, height);
+    // boardmapperctx.strokeRect(startX, startY, width, height);
+}
+
+if(saveForm){
+    x_axis = document.getElementById('x-axis');
+    y_axis = document.getElementById('y-axis');
+    w_axis = document.getElementById('w-axis');
+    h_axis = document.getElementById('h-axis');
+    capatype = document.getElementById('capatype');
+    boardtype = document.getElementById('boardtype');
+    modeltype = document.getElementById('modeltype');
+    formtype = document.getElementById('formtype');
+
+    saveForm.addEventListener('submit', function(event) {
+        // Stop the form from submitting immediately
+        event.preventDefault(); 
+        let hidden = '';   
+        $('input[type="hidden"]').each(function() {
+            hidden += '&' + $(this).attr('id') + '=' + $(this).val();
+          });
+        // You can access form fields with the "form" object
+        var formData = $(this).serialize() + hidden;
+        console.log(formData);
+        $.ajax({
+          type: "POST",
+          url: "submit.php",
+          data: formData,
+          success: function(response) {
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            // Handle any errors that occurred during the AJAX call
+            saveModal.hide();
+            console.error(errorThrown);
+            errorModalBody.innerHTML = errorThrown;
+            errorModal.show();
+          }
+        });
+        // reset the form
+        $(this).trigger('reset');
+    });
+}
+
+if (mapmodel){
+    mapmodel.addEventListener('change',function(){
+        let local_path = '/Board/';
+        let Item = mapmodel.value;      
+        if(Item.includes(' ')){
+            MapperbackgroundImage = new Image();
+            // Clear the boardmapper
+            boardmapperctx.clearRect(0, 0, boardmapper.width, boardmapper.height);        
+            // Draw "no available image" message
+            boardmapperctx.fillStyle = 'red';
+            boardmapperctx.font = '30px Consolas';
+            boardmapperctx.textAlign = 'center';
+            boardmapperctx.textBaseline = 'middle';
+            boardmapperctx.fillText('Please Select your desire modal', boardmapper.width/2, boardmapper.height/2);
+            return;
+        }
+        let filePath = "/file.json";
+        loadJSONFile(filePath)
+        .then(data => {
+            let img = local_path + Item;
+            GetMappedPart();                   
+            LoadBoardMapper(img,data)
+        })
+        .catch(error => {
+            console.log(error);
+            errorModalBody.innerHTML = error;
+            errorModal.show();
+            LoadBoardMapper('An Error Occurred');
+            if(boardviewer){
+                InvalidItems('error');
+            }
+        });
+    });
+}
+
+if(Serial){
+    boardviewer.addEventListener("click",function(){
+        Serial.focus();
+        Serial.select();
+    });
+    Serial.focus();
+    Serial.select();
+    Serial.addEventListener('keydown', (event) => {
+        let local_path = '/Board/';
+        if (event.key === 'Enter') {
+            const inputText = event.target.value.trim().toUpperCase();
+            ClearItems();
+            if (inputText === 'MAPPER') {
+                loginModal.show();
+            }else{
+                if(inputText.length < 18){
+                    if(inputText.length === 0){
+                        LoadBoardViewer('SCAN SERIAL NUMBER TO PROCEED');
+                        return;
+                    }
+                    errorModalBody.innerHTML = 'Invalid Serial Number';
+                    errorModal.show();
+                    Serial.focus();
+                    Serial.select();
+                    InvalidItems('Invalid');
+                    LoadBoardViewer('Invalid Serial Number');
+                    return;
+                }else{
+                    let filePath = "/file.json";
+                    loadJSONFile(filePath)
+                    .then(data => {
+                        const InvalidMapping = data.filter(obj => obj.Mapping === 0);
+                        if(InvalidMapping.length > 0){
+                            let PartName = InvalidMapping.map(item => item.PartName);
+                            PartName = PartName.length > 1 ? PartName.slice(0, -1).join(', ') + ' and ' + PartName.slice(-1) : PartName[0];
+                            errorModalBody.innerHTML = PartName + ' Was not yet map';
+                            errorModal.show();
+                            LoadBoardViewer(PartName + ' Was not yet map');
+                            InvalidItems('Not Yet Map');
+                            return;
+                        }    
+                        let img = local_path + 'LowCapa_DB_XXX_2.5.jpg';                        
+                        LoadBoardViewer(img,data)
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        errorModalBody.innerHTML = error;
+                        errorModal.show();
+                        LoadBoardViewer('An Error Occurred');
+                        InvalidItems('error');
+                    });
+                    Serial.focus();
+                    Serial.select();
+                }
+            }
+        }
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// async function hideloop() {
+//     for (let i = 1; i <= 5; i++) {
+//       await new Promise(resolve => setTimeout(() => {
+//         // Get the child element by its ID
+//         let div = "NG" + i;
+//         var childElement = document.getElementById(div);
+//         // Get the parent element using parentNode
+//         var parentElement = childElement.parentNode;
+//         // Hide the parent element by setting the display property to "none"
+//         parentElement.style.display = "none";
+//         resolve();
+//       }, 500));
+//     }
+//   }
+function loadJSONFile(filePath) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+        url: filePath,
+        dataType: "json",
+        success: function(data) {
+            resolve(data);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            reject("Error: " + textStatus);
+            errorModalBody.innerHTML = textStatus;
+            errorModal.show();
+        }
+        });
+    });
+}
+    
+function ClearItems() {
+    for (let i = 1; i <= 5; i++) {
+        var childElement = document.getElementById('NG' + i);
+        childElement.innerHTML = '------';
+        var parentElement = childElement.parentNode;
+        parentElement.style.display = '';
+    }
+    for (let i = 1; i <= 6; i++) {
+        document.getElementById('INFO' + i).innerHTML = '--------------'
+    }
+    document.getElementById('BGA').innerHTML = '--- ---';
+}
+
+function InvalidItems(text) {
+    for (let i = 1; i <= 5; i++) {
+        var childElement = document.getElementById('NG' + i);
+        childElement.innerHTML = text;
+        var parentElement = childElement.parentNode;
+        parentElement.style.display = '';
+    }
+    for (let i = 1; i <= 6; i++) {
+        document.getElementById('INFO' + i).innerHTML = text;
+    }
+    document.getElementById('BGA').innerHTML = text;
+}
+
+function GetModelFromImgPath(){
+    return new Promise((resolve, reject) => {
+        $.ajax({
+        url: '/Board',
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            response.forEach(function(file) {
+                const extension = file.substring(file.lastIndexOf('.') + 1);
+                if('jpgpng'.includes(extension)){
+                    const option = document.createElement('option');
+                    option.value = file;
+                    option.text = file.replaceAll('.'+extension,'');
+                    mapmodel.appendChild(option);
+                }
+            });
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error('Error retrieving file list:', errorThrown);
+            errorModalBody.innerHTML = errorThrown;
+            errorModal.show();
+        }
+        });
+        resolve('Success!');
+    });
+}
+
+async function Mapperdefaultsetup() {
+    loadingModal.show();
+    await GetModelFromImgPath();
+    setTimeout(function() {
+        loadingModal.hide(); 
+        LoadBoardMapper(' ');
+    }, 500); 
+}
+
+// async function executeFunctions() {        
+//     for (let i = 1; i <= 15; i++) {
+//         await hideloop();
+//         await showloop();
+//     }   
+// }
+
+// executeFunctions();
+
+function GetMappedPart(){    
+    return new Promise((resolve, reject) => {
+        let filePath = "/parts.json";
+        $.ajax({
+            url: filePath,
+            method: 'GET',
+            dataType: 'json',
+            success: function(response) {
+            // Loop through data and add to table
+            $.each(response, function(index, part) {
+                let row = `<tr>
+                <td class="text-primary"> ${part.PartName} </td>
+                <td class="text-primary"> ${part.PartDescription} </td>
+                <td class="text-primary"> ${part.location} </td>
+                <td class="text-primary">
+                    <button onclick="remove(this)" id="remove" class="btn btn-primary btn-sm p-1 remove-part" data-id="${part.ID}">
+                        Remove
+                    </button>
+                </td>
+                </tr>`;
+                $('#MapTable tbody').append(row)
+            });
+            }
+        });
+      resolve('Success!');
+  });
+}
+
+function remove(event){
+    var partId = $(event).data('id');
+    $(event).closest('tr').remove();
+    $.ajax({
+        url: 'https://example.com/removePart',
+        method: 'POST',
+        data: {id: partId},
+        dataType: 'json',
+        success: function(response) {
+          console.log(response);
+        }
+      });
+}
