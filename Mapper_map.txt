@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/auditor.png">
+  <title>Mapper</title>
+  <link rel="stylesheet" href="./Tagless/css/bootstrap.min.css">
+  <script src="./Tagless/js/jquery-3.6.4.min.js" defer></script>
+  <script src="./Tagless/js/bootstrap.min.js" defer></script>
+  <script src="./Tagless/Tagless.js" defer></script>
+  <link rel="stylesheet" href="./Tagless/Tagless.css">
+</head>
+
+<body class="m-0 p-0 text-primary font-monospace bg-dark bg-opacity-10 overflow-hidden">
+  <div class="m-2 text-center">
+    <div class="row row-cols-1 m-0">
+      <div class="col-6 mb-3">
+        <div class="row">
+          <div class="col-6">
+            <div class="input-group flex-nowrap">
+              <select id="mapmodel" class="form-select text-primary fw-bold" aria-label="Default select example">
+                <option selected>SELECT MODEL</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="d-grid gap-2">
+              <button class="btn btn-outline-light text-primary border-primary" type="button">Back to Viewer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col mb-1">
+        <canvas width="1310" height="430" class="bg-light border border-2 border-primary rounded-2"
+          id="boardmapper"></canvas>
+      </div>
+      <div class="col-4 mb-1">
+        <div class="maptablediv border border-2 border-primary rounded-2 overflow-auto bg-light">
+          <table id="MapTable" class="table table-borderless table-hover table-striped fs-6">
+            <thead class="text-bg-primary sticky-top">
+              <tr>
+                <th>Part Name</th>
+                <th>Part Description</th>
+                <th>Location</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Data will be dynamically added here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="saveModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content text-center text-primary">
+        <div class="modal-header d-block v-4r">
+          <div class="row row-cols-3">
+            <div class="col text-start">
+              <h4 class="modal-title fw-bold" id="exampleModalLabel">
+                Mapping
+              </h4>
+            </div>
+            <div class="col">
+              <svg id="mapsvg" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-pin-map"
+                viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                  d="M3.1 11.2a.5.5 0 0 1 .4-.2H6a.5.5 0 0 1 0 1H3.75L1.5 15h13l-2.25-3H10a.5.5 0 0 1 0-1h2.5a.5.5 0 0 1 .4.2l3 4a.5.5 0 0 1-.4.8H.5a.5.5 0 0 1-.4-.8l3-4z" />
+                <path fill-rule="evenodd"
+                  d="M8 1a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999z" />
+              </svg>
+            </div>
+            <div class="col text-end">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body fs-5">
+          <form id="saveForm">
+            <div class="container text-center">
+              <div class="row mb-3">
+                <div class="col-sm">
+                  <div class="form-group">
+                    <label class="fw-bold" for="PartName">Part Name</label>
+                    <input type="text" class="form-control text-center text-primary fs-5" name="PartName" id="PartName"
+                      required>
+                  </div>
+                </div>
+                <div class="col-sm">
+                  <div class="form-group">
+                    <label class="fw-bold" for="PartDesciption">Part Desciption</label>
+                    <input type="text" class="form-control text-center text-primary fs-5" name="PartDesciption"
+                      id="PartDesciption" required>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-sm">
+                  <div class="form-group">
+                    <label class="fw-bold" for="DiagCode">Diag Code</label>
+                    <input maxlength="4" type="text" class="form-control text-center text-primary fs-5" name="DiagCode"
+                      id="DiagCode" required>
+                  </div>
+                </div>
+                <div class="col-sm">
+                  <div class="form-group">
+                    <label for="PartLocation">Part Location</label>
+                    <select class="form-select text-center text-primary fs-5 fw-bold" name="PartLocation"
+                      id="PartLocation" required>
+                      <option value="" hidden>Location</option>
+                      <option value="F">Front</option>
+                      <option value="B">Back</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" id="x-axis" required>
+            <input type="hidden" id="y-axis" required>
+            <input type="hidden" id="w-axis" required>
+            <input type="hidden" id="h-axis" required>
+            <input type="hidden" id="capatype" required>
+            <input type="hidden" id="boardtype" required>
+            <input type="hidden" id="modeltype" required>
+            <input type="hidden" id="formtype" required>
+            <div class="d-flex justify-content-center gap-2 fs-5">
+              <button type="reset" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary fw-bold">Save changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Error modal -->
+  <div class="modal fade" id="errorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content text-center">
+        <div class="modal-header d-block v-4r">
+          <div class="row row-cols-3 justify-content-between">
+            <div class="col text-start">
+              <h4 class="modal-title fw-bold" id="errorModalLabel">
+                ERROR
+              </h4>
+            </div>
+            <div class="col overflow-visible">
+              <svg id="errorsvg" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-x-circle"
+                viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                <path
+                  d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+              </svg>
+            </div>
+            <div class="col text-end">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body fs-5">
+          <!-- Error message goes here -->
+          An error occurred.
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+          <button type="button" class="btn btn-primary fw-bold" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loadingModalLabel">Loading...</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Please wait while the page is loading.</p>
+          <!-- You can add additional text or HTML elements here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
