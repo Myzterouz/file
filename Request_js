@@ -1,16 +1,5 @@
 
 $(document).ready(function () {
-    $('a[data-partialview]').click(function (event) {
-        event.preventDefault();
-        var url = $(this).attr('href');
-        var title = $(this).data('title'); // get the title attribute
-        $.get(url, function (data) {
-            var partialHtml = $(data).find('#partialView').html();
-            $('#partialView').html(partialHtml);
-            document.title = title;
-        });
-    });
-
     var api = $.connection.update;
     api.client.updateReference = function () {
         var RequestorViewTable = document.getElementById('RequestorView-Table');
@@ -31,6 +20,10 @@ $(document).ready(function () {
 
     $.connection.hub.start().done(function () {
         api.server.updateAll();
+        var activePartialId = sessionStorage.getItem('activePartialId'); // get the active partial id from session storage
+        if (activePartialId) {
+            $('#' + activePartialId).click(); // click the link with the active partial id
+        }
     });
 });
 
@@ -43,6 +36,25 @@ function UpdateClient() {
     var api = $.connection.update;
     api.server.updateAll();
 }
+
+
+
+
+
+// Attach a delegated click event listener to the document object
+$(document).on('click', 'a[data-partialview]', function (event) {
+    event.preventDefault();
+    var url = $(this).attr('href');
+    var title = $(this).data('title'); // get the title attribute
+    var id = $(this).attr('id'); // get the id of the clicked link
+    $.get(url, function (data) {
+        var partialHtml = $(data).find('#partialView').html();
+        $('#partialView').html(partialHtml);
+        document.title = title;
+        sessionStorage.setItem('activePartialId', id); // store the active partial id in session storage
+    });
+});
+
 
 // When the accept button is clicked, move the request to the Locator Status tab
 $(document).on('click', '.accept-btn', function () {
