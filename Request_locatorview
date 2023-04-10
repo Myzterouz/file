@@ -1,0 +1,20 @@
+<table id="LocatorView-Table" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Requestor</th>
+            <th>Request Purpose</th>
+            <th>Date and Time Needed</th>
+            <th>CSV Filename</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Jane Smith</td>
+            <td>IT Equipment</td>
+            <td>04/14/2023 2:00 PM</td>
+            <td>it_equipment.csv</td>
+            <td><span class="badge bg-success rounded-pill">Located</span></td>
+        </tr>
+    </tbody>
+</table>
