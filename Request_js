@@ -13,12 +13,16 @@ $(document).ready(function () {
 
     var api = $.connection.update;
     api.client.updateReference = function () {
+        var RequestorViewTable = document.getElementById('RequestorView-Table');
+        var LocatorTable = document.getElementById('Locator-Table');
+        var LocatorViewtable = document.getElementById('LocatorView-Table');
         let num = i++;
         if (RequestorViewTable) {
             console.log(`Update RequestorViewTable View number ${num}`);
         }
         if (LocatorTable) {
             console.log(`Update LocatorTable View number ${num}`);
+            Update();
         }
         if (LocatorViewtable) {
             console.log(`Update LocatorViewtable View number ${num}`);
@@ -31,9 +35,6 @@ $(document).ready(function () {
 });
 
 var i = 0;
-var RequestorViewTable = document.getElementById('RequestorView-Table');
-var LocatorTable = document.getElementById('Locator-Table');
-var LocatorViewtable = document.getElementById('LocatorView-Table');
 var locatorform = document.getElementById('locator-form');
 var statusmodaldiv = document.getElementById('status-modal');
 var statusmodal = statusmodaldiv ? new bootstrap.Modal(statusmodaldiv) : null;
@@ -44,13 +45,12 @@ function UpdateClient() {
 }
 
 // When the accept button is clicked, move the request to the Locator Status tab
-$('.accept-btn').click(function () {
+$(document).on('click', '.accept-btn', function () {
     // Get the values of the columns for this row
     var requestor = $(this).closest('tr').find('td:eq(0)').text();
     var purpose = $(this).closest('tr').find('td:eq(1)').text();
     var datetime = $(this).closest('tr').find('td:eq(2)').text();
     var filename = $(this).closest('tr').find('td:eq(3)').text();
-
     // Update the modal with the request details
     $('#status-modal .modal-body').html('<p>Please update the status of this request:</p><p><strong>Requestor:</strong> ' + requestor + '</p><p><strong>Purpose:</strong> ' + purpose + '</p><p><strong>Date and Time Needed:</strong> ' + datetime + '</p><p><strong>CSV Filename:</strong> ' + filename + '</p><div class="form-group"><label for="status-select">Status:</label><select class="form-control" id="status-select"><option value="ongoing">Ongoing</option><option value="located">Located</option><option value="finished">Finished</option></select></div>');
 
@@ -134,4 +134,31 @@ if (locatorform) {
         // reset the form
         $(this).trigger('reset');
     });
+}
+
+function Update() {
+    var btn = `<div class="btn-group" role="group">
+                        <button type="button" class="btn btn-success accept-btn" data-bs-toggle="modal"
+                                data-bs-target="#status-modal">
+                            Accept
+                        </button>
+                        <button type="button" class="btn btn-danger">Decline</button>
+                    </div>`;
+    var dataArr = [
+        { requestor: 'John Doe', purpose: 'Data Analysis', dateNeeded: '2022-04-20', filename: 'data.csv', status: 'Pending' },
+        { requestor: 'Jane Smith', purpose: 'Reporting', dateNeeded: '2022-05-01', filename: 'report.csv', status: 'Approved' },
+        { requestor: 'Bob Johnson', purpose: 'Data Mining', dateNeeded: '2022-05-15', filename: 'mining.csv', status: 'Pending' },
+    ];
+    var tableBody = $('#Locator-Table').find('tbody');
+    tableBody.empty();
+    for (var i = 0; i < dataArr.length; i++) {
+        var row = '<tr><td>' + dataArr[i].requestor + '</td><td>' + dataArr[i].purpose + '</td><td>' + dataArr[i].dateNeeded + '</td><td>' + dataArr[i].filename + '</td><td>' + dataArr[i].status + '</td><td>' + btn + '</td></tr>';
+        tableBody.append(row);
+    }
+}
+if (statusmodaldiv) {
+    statusmodaldiv.addEventListener('hidden.bs.modal', event => {
+        locatorform.reset();
+    });
+
 }
