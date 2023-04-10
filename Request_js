@@ -1,15 +1,27 @@
-$(function () {
+
+$(document).ready(function () {
+    $('a[data-partialview]').click(function (event) {
+        event.preventDefault();
+        var url = $(this).attr('href');
+        var title = $(this).data('title'); // get the title attribute
+        $.get(url, function (data) {
+            var partialHtml = $(data).find('#partialView').html();
+            $('#partialView').html(partialHtml);
+            document.title = title;
+        });
+    });
+
     var api = $.connection.update;
     api.client.updateReference = function () {
         let num = i++;
         if (RequestorViewTable) {
-            console.log(`Update Requestor View number ${num}`);
+            console.log(`Update RequestorViewTable View number ${num}`);
         }
         if (LocatorTable) {
-            console.log(`Update Requestor View number ${num}`);
+            console.log(`Update LocatorTable View number ${num}`);
         }
         if (LocatorViewtable) {
-            console.log(`Update Requestor View number ${num}`);
+            console.log(`Update LocatorViewtable View number ${num}`);
         }
     };
 
@@ -99,6 +111,7 @@ if (locatorform) {
         // You can access form fields with the "form" object
         var formData = $(this).serialize() + hidden + "&status=" + newStatus;
 
+        UpdateClient()
         console.log(formData);
         $.ajax({
             type: "POST",
