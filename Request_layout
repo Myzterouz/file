@@ -23,7 +23,8 @@
                data_toggle = "tab",
                aria_selected = "true",
                data_partialview = "true",
-               data_title = "Requestor"
+               data_title = "Requestor",
+               @id = "RequestorTab"
            })
         </li>
         <li class="nav-item">
@@ -34,9 +35,10 @@
                data_toggle = "tab",
                aria_selected = "false",
                data_partialview = "true",
-               data_title = "RequestorView"
+               data_title = "RequestorView",
+               @id = "RequestorViewTab"
            })
-         </li>
+        </li>
         <li class="nav-item">
             @Html.ActionLink("Locator", "Locator", "REQUEST", new
            {
@@ -45,30 +47,33 @@
                data_toggle = "tab",
                aria_selected = "false",
                data_partialview = "true",
-               data_title = "Locator"
-            })
+               data_title = "Locator",
+               @id = "LocatorTab"
+           })
         </li>
         <li class="nav-item">
             @Html.ActionLink("LocatorView", "LocatorView", "REQUEST", new
-           {
-               @class = "nav-link",
-               role = "tab",
-               data_toggle = "tab",
-               aria_selected = "false",
-               data_partialview = "true",
-               data_title = "LocatorView"
-           })
+       {
+           @class = "nav-link",
+           role = "tab",
+           data_toggle = "tab",
+           aria_selected = "false",
+           data_partialview = "true",
+           data_title = "LocatorView",
+           @id = "LocatorViewTab"
+       })
         </li>
         <li class="nav-item">
             @Html.ActionLink("About", "About", "REQUEST", new
-           {
-               @class = "nav-link",
-               role = "tab",
-               data_toggle = "tab",
-               aria_selected = "false",
-               data_partialview = "true",
-               data_title = "About"
-           })
+       {
+           @class = "nav-link",
+           role = "tab",
+           data_toggle = "tab",
+           aria_selected = "false",
+           data_partialview = "true",
+           data_title = "About",
+           @id = "AboutTab"
+       })
         </li>
     </ul>
 
@@ -76,6 +81,41 @@
         <div id="view" class="tab-pane fade show active" role="tabpanel">
             <div id="partialView">
                 @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="status-modal" tabindex="-1" role="dialog" aria-labelledby="status-modal-label"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="status-modal-label">Locator Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="locator-form">
+                    <div class="modal-body">
+                        <p>Please update the status of this request:</p>
+                        <div class="form-group">
+                            <label for="status-select">Status:</label>
+                            <select class="form-control" id="status-select">
+                                <option value="ongoing">Ongoing</option>
+                                <option value="located">Located</option>
+                                <option value="finished">Finished</option>
+                            </select>
+                        </div>
+                    </div>
+                    <input type="hidden" id="data-requestor" required>
+                    <input type="hidden" id="data-purpose" required>
+                    <input type="hidden" id="data-datetime" required>
+                    <input type="hidden" id="data-filename" required>
+                    <input type="hidden" id="data-filename" required>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary save-status-btn">Save changes</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
