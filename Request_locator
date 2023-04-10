@@ -1,97 +1,31 @@
-<table id="Locator-Table" class="table table-striped">
-    <thead>
-        <tr>
-            <th>Requestor</th>
-            <th>Request Purpose</th>
-            <th>Date and Time Needed</th>
-            <th>CSV Filename</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>John Doe</td>
-            <td>Office Furniture</td>
-            <td>04/12/2023 9:00 AM</td>
-            <td>office_furniture.csv</td>
-            <td><span class="badge bg-primary rounded-pill">Pending</span></td>
-            <td>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-success accept-btn" data-bs-toggle="modal"
-                            data-bs-target="#status-modal">
-                        Accept
-                    </button>
-                    <button type="button" class="btn btn-danger">Decline</button>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>Jane Smith</td>
-            <td>IT Equipment</td>
-            <td>04/14/2023 2:00 PM</td>
-            <td>it_equipment.csv</td>
-            <td><span class="badge bg-primary rounded-pill">Pending</span></td>
-            <td>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-success accept-btn" data-bs-toggle="modal"
-                            data-bs-target="#status-modal">
-                        Accept
-                    </button>
-                    <button type="button" class="btn btn-danger">Decline</button>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>Mark Johnson</td>
-            <td>Office Supplies</td>
-            <td>04/15/2023 1:30 PM</td>
-            <td>office_supplies.csv</td>
-            <td><span class="badge bg-primary rounded-pill">Pending</span></td>
-            <td>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-success accept-btn" data-bs-toggle="modal"
-                            data-bs-target="#status-modal">
-                        Accept
-                    </button>
-                    <button type="button" class="btn btn-danger">Decline</button>
-                </div>
-            </td>
-        </tr>
-    </tbody>
-</table>
 
-<!-- Modal -->
-<div class="modal fade" id="status-modal" tabindex="-1" role="dialog" aria-labelledby="status-modal-label"
-     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="status-modal-label">Locator Status</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="locator-form">
-                <div class="modal-body">
-                    <p>Please update the status of this request:</p>
-                    <div class="form-group">
-                        <label for="status-select">Status:</label>
-                        <select class="form-control" id="status-select">
-                            <option value="ongoing">Ongoing</option>
-                            <option value="located">Located</option>
-                            <option value="finished">Finished</option>
-                        </select>
+    <table id="Locator-Table" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Requestor</th>
+                <th>Request Purpose</th>
+                <th>Date and Time Needed</th>
+                <th>CSV Filename</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>John Doe</td>
+                <td>Office Furniture</td>
+                <td>04/12/2023 9:00 AM</td>
+                <td>office_furniture.csv</td>
+                <td><span class="badge bg-primary rounded-pill">Pending</span></td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-success accept-btn" data-bs-toggle="modal"
+                                data-bs-target="#status-modal">
+                            Accept
+                        </button>
+                        <button type="button" class="btn btn-danger">Decline</button>
                     </div>
-                </div>
-                <input type="hidden" id="data-requestor" required>
-                <input type="hidden" id="data-purpose" required>
-                <input type="hidden" id="data-datetime" required>
-                <input type="hidden" id="data-filename" required>
-                <input type="hidden" id="data-filename" required>
-                <div class="modal-footer">
-                    <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary save-status-btn">Save changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
