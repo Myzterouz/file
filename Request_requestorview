@@ -1,0 +1,48 @@
+<table id="RequestorView-Table" class="table">
+    <thead>
+        <tr>
+            <th scope="col">Requestor</th>
+            <th scope="col">Request Purpose</th>
+            <th scope="col">Date and Time Needed</th>
+            <th scope="col">CSV Filename</th>
+            <th scope="col">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>John Doe</td>
+            <td>Buy Supplies</td>
+            <td>04/10/2023 9:00 AM</td>
+            <td>supplies.csv</td>
+            <td><span class="badge bg-primary rounded-pill">Pending</span></td>
+        </tr>
+        <tr>
+            <td>Jane Smith</td>
+            <td>Equipment Repair</td>
+            <td>04/11/2023 1:30 PM</td>
+            <td>repair.csv</td>
+            <td><span class="badge bg-warning rounded-pill">Ongoing</span></td>
+        </tr>
+        <tr>
+            <td>Bob Johnson</td>
+            <td>Office Cleaning</td>
+            <td>04/12/2023 10:00 AM</td>
+            <td>cleaning.csv</td>
+            <td><span class="badge bg-success rounded-pill">Located</span></td>
+        </tr>
+        <tr>
+            <td>Sara Lee</td>
+            <td>File Retrieval</td>
+            <td>04/13/2023 2:15 PM</td>
+            <td>files.csv</td>
+            <td><span class="badge bg-danger rounded-pill">Finished</span></td>
+        </tr>
+        <tr>
+            <td>David Brown</td>
+            <td>Staff Recruitment</td>
+            <td>04/14/2023 8:00 AM</td>
+            <td>recruitment.csv</td>
+            <td><span class="badge bg-secondary rounded-pill">Cancelled</span></td>
+        </tr>
+    </tbody>
+</table>
