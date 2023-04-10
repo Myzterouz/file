@@ -1,0 +1,124 @@
+$(function () {
+    var api = $.connection.update;
+    api.client.updateReference = function () {
+        let num = i++;
+        if (RequestorViewTable) {
+            console.log(`Update Requestor View number ${num}`);
+        }
+        if (LocatorTable) {
+            console.log(`Update Requestor View number ${num}`);
+        }
+        if (LocatorViewtable) {
+            console.log(`Update Requestor View number ${num}`);
+        }
+    };
+
+    $.connection.hub.start().done(function () {
+        api.server.updateAll();
+    });
+});
+
+var i = 0;
+var RequestorViewTable = document.getElementById('RequestorView-Table');
+var LocatorTable = document.getElementById('Locator-Table');
+var LocatorViewtable = document.getElementById('LocatorView-Table');
+var locatorform = document.getElementById('locator-form');
+var statusmodaldiv = document.getElementById('status-modal');
+var statusmodal = statusmodaldiv ? new bootstrap.Modal(statusmodaldiv) : null;
+
+function UpdateClient() {
+    var api = $.connection.update;
+    api.server.updateAll();
+}
+
+// When the accept button is clicked, move the request to the Locator Status tab
+$('.accept-btn').click(function () {
+    // Get the values of the columns for this row
+    var requestor = $(this).closest('tr').find('td:eq(0)').text();
+    var purpose = $(this).closest('tr').find('td:eq(1)').text();
+    var datetime = $(this).closest('tr').find('td:eq(2)').text();
+    var filename = $(this).closest('tr').find('td:eq(3)').text();
+
+    // Update the modal with the request details
+    $('#status-modal .modal-body').html('<p>Please update the status of this request:</p><p><strong>Requestor:</strong> ' + requestor + '</p><p><strong>Purpose:</strong> ' + purpose + '</p><p><strong>Date and Time Needed:</strong> ' + datetime + '</p><p><strong>CSV Filename:</strong> ' + filename + '</p><div class="form-group"><label for="status-select">Status:</label><select class="form-control" id="status-select"><option value="ongoing">Ongoing</option><option value="located">Located</option><option value="finished">Finished</option></select></div>');
+
+    // Save the request details in a data attribute of the save changes button
+    $('#status-modal .save-status-btn').attr('data-requestor', requestor);
+    $('#data-requestor').val(requestor);
+    $('#status-modal .save-status-btn').attr('data-purpose', purpose);
+    $('#data-purpose').val(purpose);
+    $('#status-modal .save-status-btn').attr('data-datetime', datetime);
+    $('#data-datetime').val(datetime);
+    $('#status-modal .save-status-btn').attr('data-filename', filename);
+    $('#data-filename').val(filename);
+
+});
+
+// When the save changes button is clicked, move the request to the Locator Status tab
+$('.save-status-btn').click(function () {
+
+    // Get the new status from the modal
+    var newStatus = $('#status-select').val();
+
+    // Get the values of the columns for this request
+    var requestor = $(this).attr('data-requestor');
+    var purpose = $(this).attr('data-purpose');
+    var datetime = $(this).attr('data-datetime');
+    var filename = $(this).attr('data-filename');
+    let row = `<tr>
+                    <td>${requestor}</td>
+                    <td>${purpose}</td>
+                    <td>${datetime}</td>
+                    <td>${filename}</td>
+                    <td><span class="badge bg-success rounded-pill">${newStatus}</span></td>
+                </tr>`;
+    $('#locate-table tbody').append(row);
+
+    //// Update the row in the Locate tab with the new status
+    //$('#locator-table tbody tr').each(function () {
+    //    if ($(this).find('td:eq(0)').text() == requestor && $(this).find('td:eq(1)').text() == purpose && $(this).find('td:eq(2)').text() == datetime && $(this).find('td:eq(3)').text() == filename) {
+    //        $(this).closest('tr').remove();
+    //    }
+    //});
+
+    // Hide the modal
+    statusmodal.hide();
+});
+
+if (locatorform) {
+    locatorform.addEventListener('submit', function (event) {
+        // Get the new status from the modal
+        var newStatus = $('#status-select').val();
+        // Stop the form from submitting immediately
+        event.preventDefault();
+
+        let hidden = '';
+        $('input[type="hidden"]').each(function () {
+            hidden += $(this).attr('id') + '=' + $(this).val() + '&';
+        });
+        // You can access form fields with the "form" object
+        var formData = $(this).serialize() + hidden + "&status=" + newStatus;
+
+        console.log(formData);
+        $.ajax({
+            type: "POST",
+            url: "submit.php",
+            data: formData,
+            success: function (response) {
+                // Update the row in the Locate tab with the new status
+                $('#Locator-Table tbody tr').each(function () {
+                    if ($(this).find('td:eq(0)').text() == requestor && $(this).find('td:eq(1)').text() == purpose && $(this).find('td:eq(2)').text() == datetime && $(this).find('td:eq(3)').text() == filename) {
+                        $(this).closest('tr').remove();
+                    }
+                });
+                UpdateClient()
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                // Handle any errors that occurred during the AJAX call
+                console.error(errorThrown);
+            }
+        });
+        // reset the form
+        $(this).trigger('reset');
+    });
+}
