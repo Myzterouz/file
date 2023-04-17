@@ -1,0 +1,22 @@
+.table-rounded {
+    border-radius: 10px;
+  }
+ 
+  #myTable_wrapper > .row:first-of-type {
+    display: none !important;
+  }
+
+  #myTable {
+    margin: 0rem !important;
+  }
+
+  .hide {    
+    position: relative !important;
+    height: 25rem !important;
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+  }
+
+  #myTable > tbody > tr > td {
+    text-align: center !important;
+  }

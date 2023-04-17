@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="assest/bootstrap.min.css">
+    <link rel="stylesheet" href="assest/datatables.min.css">
+    <script src="assest/jquery-3.6.4.min.js" defer></script>
+    <script src="assest/bootstrap.min.js" defer></script>
+    <script src="assest/datatables.min.js" defer></script>
+    <script src="assest/responsive.dataTables.min.js" defer></script>
+    <script src="javascript.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>My Table</h2>
+        <div class="hide border border-5 border-primary rounded-2 overflow-auto bg-light">
+            <table id="myTable" class="table table-striped rounded">
+                <thead class="text-bg-dark sticky-top">
+                    <tr>
+                        <th class="text-center">Name</th>
+                        <th class="text-center">Age</th>
+                        <th class="text-center">Gender</th>
+                        <th class="text-center">Country</th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th>
+                            <select class="form-control">
+                            </select>
+                        </th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>    
+    </div>    
+</body>
+</html>
