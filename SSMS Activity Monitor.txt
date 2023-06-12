@@ -1,0 +1,170 @@
+WITH PerfCounters AS (
+    SELECT
+        object_name,
+        counter_name,
+        instance_name,
+        cntr_value
+    FROM sys.dm_os_performance_counters
+    WHERE counter_name IN (
+        'Batch Requests/sec',
+        'SQL Compilations/sec',
+        'SQL Recompilations/sec',
+        'User Connections'
+    )
+)
+SELECT
+    GETDATE() AS [Timestamp],
+    (SELECT cntr_value FROM PerfCounters WHERE counter_name = 'Batch Requests/sec') AS [BatchRequestsPerSec],
+    (SELECT cntr_value FROM PerfCounters WHERE counter_name = 'SQL Compilations/sec') AS [SQLCompilationsPerSec],
+    (SELECT cntr_value FROM PerfCounters WHERE counter_name = 'SQL Recompilations/sec') AS [SQLRecompilationsPerSec],
+    (SELECT cntr_value FROM PerfCounters WHERE counter_name = 'User Connections') AS [UserConnections],
+    cpu_usage_percent = 100 - (SELECT TOP 1 record.value('(./Record/SchedulerMonitorEvent/SystemHealth/SystemIdle/text())[1]', 'float') FROM (SELECT TOP 1 [timestamp], CONVERT(xml, record) AS record FROM sys.dm_os_ring_buffers WHERE ring_buffer_type = N'RING_BUFFER_SCHEDULER_MONITOR' AND record LIKE '%<SystemHealth>%') AS x ORDER BY [timestamp] DESC),
+    memory_usage_percent = (SELECT (1 * 100.0) / total_physical_memory_kb FROM sys.dm_os_sys_memory)
+FROM PerfCounters
+GROUP BY object_name;
+
+
+This query retrieves the following performance metrics:
+1.Timestamp: The current date and time.
+2.BatchRequestsPerSec: The number of batch requests received by the server per second.
+3.SQLCompilationsPerSec: The number of SQL compilations per second.
+4.SQLRecompilationsPerSec: The number of SQL recompilations per second.
+5.UserConnections: The number of user connections to the server.
+6.cpu_usage_percent: The percentage of CPU usage by the server.
+7.memory_usage_percent: The percentage of memory usage by the server.
+
+Once you have the query, you can use it as a data source in Power BI:
+1.Open Power BI Desktop.
+2.Click on "Home" > "Get Data" > "SQL Server".
+3.Enter your SQL Server instance name and database name.
+4.Choose "DirectQuery" as the Data Connectivity mode.
+5.Click on "Advanced options" and paste the query into the "SQL statement" box.
+6.Click "OK" and follow the prompts to connect to your SQL Server.
+After connecting to the data source, you can create visualizations in Power BI to monitor your server performance.
+
+
+
+
+
+WITH PerfCounters AS (
+    SELECT
+        object_name,
+        counter_name,
+        instance_name,
+        cntr_value
+    FROM sys.dm_os_performance_counters
+    WHERE counter_name IN (
+        'Batch Requests/sec',
+        'Processes blocked'
+    )
+)
+SELECT
+    GETDATE() AS [Timestamp],
+    (SELECT TOP 1 record.value('(./Record/SchedulerMonitorEvent/SystemHealth/SystemIdle/text())[1]', 'float') FROM (SELECT TOP 1 [timestamp], CONVERT(xml, record) AS record FROM sys.dm_os_ring_buffers WHERE ring_buffer_type = N'RING_BUFFER_SCHEDULER_MONITOR' AND record LIKE '%<SystemHealth>%') AS x ORDER BY [timestamp] DESC) AS [ProcessorTimePercent],
+    (SELECT cntr_value FROM PerfCounters WHERE counter_name = 'Processes blocked') AS [WaitingTasks],
+    (SELECT SUM(num_of_bytes_read + num_of_bytes_written) / 1048576.0 FROM sys.dm_io_virtual_file_stats(NULL, NULL)) AS [DatabaseIO_MBPerSec],
+    (SELECT cntr_value FROM PerfCounters WHERE counter_name = 'Batch Requests/sec') AS [BatchRequestsPerSec]
+FROM PerfCounters
+GROUP BY object_name;
+
+This query retrieves the following performance metrics:
+1.Timestamp: The current date and time.
+2.ProcessorTimePercent: The percentage of processor time used by the server.
+3.WaitingTasks: The number of waiting tasks.
+4.DatabaseIO_MBPerSec: The total database I/O in MB/sec.
+5.BatchRequestsPerSec: The number of batch requests received by the server per second.
+
+To use this query in Power BI:
+1.Open Power BI Desktop.
+2.Click on "Home" > "Get Data" > "SQL Server".
+3.Enter your SQL Server instance name and database name.
+4.Choose "DirectQuery" as the Data Connectivity mode.
+5.Click on "Advanced options" and paste the query into the "SQL statement" box.
+6.Click "OK" and follow the prompts to connect to your SQL Server.
+After connecting to the data source, you can create visualizations in Power BI to monitor your server performance similar to SSMS Activity Monitor.
+
+
+1. Processes:
+SELECT
+    spid,
+    status,
+    loginame,
+    hostname,
+    blocked,
+    DB_NAME(dbid) AS database_name,
+    cmd,
+    cpu,
+    physical_io,
+    memusage,
+    login_time,
+    last_batch
+FROM sys.sysprocesses;
+
+2. Resource waits:
+SELECT
+    wait_type,
+    waiting_tasks_count,
+    wait_time_ms,
+    max_wait_time_ms,
+    signal_wait_time_ms
+FROM sys.dm_os_wait_stats
+WHERE wait_time_ms > 0
+ORDER BY wait_time_ms DESC;
+
+3. Data File I/O:
+SELECT
+    DB_NAME(database_id) AS database_name,
+    file_id,
+    io_stall_read_ms,
+    num_of_reads,
+    io_stall_write_ms,
+    num_of_writes,
+    io_stall,
+    size_on_disk_bytes
+FROM sys.dm_io_virtual_file_stats(NULL, NULL);
+
+4. Recent Expensive queries:
+SELECT TOP 10
+    qs.total_elapsed_time / qs.execution_count AS avg_elapsed_time,
+    qs.total_logical_reads / qs.execution_count AS avg_logical_reads,
+    qs.total_logical_writes / qs.execution_count AS avg_logical_writes,
+    qs.creation_time,
+    qs.execution_count,
+    SUBSTRING(qt.text, qs.statement_start_offset / 2 + 1, (CASE qs.statement_end_offset WHEN -1 THEN DATALENGTH(qt.text) ELSE qs.statement_end_offset END - qs.statement_start_offset) / 2 + 1) AS query_text
+FROM sys.dm_exec_query_stats AS qs
+CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) AS qt
+ORDER BY qs.total_elapsed_time / qs.execution_count DESC;
+
+5. Active Expensive queries:
+SELECT
+    r.session_id,
+    r.start_time,
+    r.status,
+    r.command,
+    r.database_id,
+    DB_NAME(r.database_id) AS database_name,
+    r.user_id,
+    r.wait_type,
+    r.wait_time,
+    r.last_wait_type,
+    r.blocking_session_id,
+    r.logical_reads,
+    --r.logical_writes,
+    r.cpu_time,
+    r.total_elapsed_time,
+    SUBSTRING(qt.text, r.statement_start_offset / 2 + 1, (CASE r.statement_end_offset WHEN -1 THEN DATALENGTH(qt.text) ELSE r.statement_end_offset END - r.statement_start_offset) / 2 + 1) AS query_text
+FROM sys.dm_exec_requests AS r
+CROSS APPLY sys.dm_exec_sql_text(r.sql_handle) AS qt
+WHERE r.session_id > 50
+ORDER BY r.total_elapsed_time DESC;
+
+
+To use these queries in Power BI, you can create separate data sources for each query:
+1.Open Power BI Desktop.
+2.Click on "Home" > "Get Data" > "SQL Server".
+3.Enter your SQL Server instance name and database name.
+4.Choose "DirectQuery" as the Data Connectivity mode.
+5.Click on "Advanced options" and paste one of the queries into the "SQL statement" box.
+6.Click "OK" and follow the prompts to connect to your SQL Server.
+7.Repeat steps 2-6 for each query.
+After connecting to the data sources, you can create visualizations in Power BI to monitor your server performance similar to SSMS Activity Monitor.
