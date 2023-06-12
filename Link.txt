@@ -5,3 +5,6 @@ https://www.red-gate.com/simple-talk/blogs/monitoring-sql-server-power-bi/
 
 
 https://www.mssqltips.com/sqlservertip/6598/sql-server-agent-monitoring-with-power-bi/
+
+
+https://www.sqlshack.com/t-sql-scripts-to-generate-database-health-reports/
