@@ -1,0 +1,119 @@
+--DatabaseInfo
+select 
+	@@servername "Server Name",
+	CAST(SUBSTRING(@@version, 1, CHARINDEX(' - ', @@version) - 1) as varchar(max)) as "SQL Version",
+	CAST(SUBSTRING(CAST(SUBSTRING(@@version, CHARINDEX(' - ', @@version) + 3, LEN(@@version)) as varchar(max)), 1, CHARINDEX(' (X64) ', CAST(SUBSTRING(@@version, CHARINDEX(' - ', @@version) + 3, LEN(@@version)) as varchar(max))) - 1) as varchar(max)) as "SQL Build",
+	CAST(SUBSTRING(CAST(SUBSTRING(@@version, CHARINDEX(' - ', @@version) + 3, LEN(@@version)) as varchar(max)), CHARINDEX(' (X64) ', CAST(SUBSTRING(@@version, CHARINDEX(' - ', @@version) + 3, LEN(@@version)) as varchar(max))) + 7, LEN(CAST(SUBSTRING(@@version, CHARINDEX(' - ', @@version) + 3, LEN(@@version)) as varchar(max)))) as varchar(max)) as "SQL Extra Info",
+	sdb.name "Database Name",
+	sdb.create_date "Create Date Time",
+	sdb.compatibility_level "Compatibility Level",
+	sdb.collation_name "Collation Name",
+	sdb.recovery_model_desc "Recovery Model",
+	MAX(bus.backup_finish_date) AS "Last BackUp Time",
+	size.SizeinMB "Database Size (MB)",
+	CASE WHEN sdb.database_id < 5 THEN 'System' ELSE 'User' END "Database Type"
+from sys.databases sdb
+LEFT OUTER JOIN msdb.dbo.backupset bus ON bus.database_name = sdb.name
+INNER JOIN (SELECT [DatabaseName] = DB_NAME(database_id),
+       [Type] = CASE WHEN Type_Desc = 'ROWS' THEN 'Data File(s)'
+                     WHEN Type_Desc = 'LOG'  THEN 'Log File(s)'
+                     ELSE Type_Desc END,
+       [SizeinMB] = CAST( ((SUM(Size)* 8) / 1024.0) AS DECIMAL(18,2) )
+FROM   sys.master_files
+GROUP BY      GROUPING SETS
+              (
+                     (DB_NAME(database_id), Type_Desc),
+                     (DB_NAME(database_id))
+              )) size on sdb.name=size.DatabaseName and size.Type is NULL
+group by sdb.name,
+	sdb.create_date,
+	sdb.compatibility_level,
+	sdb.collation_name,
+	sdb.recovery_model_desc,
+	size.SizeinMB,
+	sdb.database_id
+	
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+--DatabaseFileSizes
+SELECT 
+	P.[DatabaseName] as [Database Name],
+	CAST(P.[Log] as int) as [Log Size (MB)],
+	CAST(P.[Data] as int) as [Data Size (MB)]
+	
+FROM
+(SELECT [DatabaseName] = DB_NAME(database_id),
+       [FileType] = CASE WHEN Type_Desc = 'ROWS' THEN 'Data'
+                     WHEN Type_Desc = 'LOG'  THEN 'Log'
+                     ELSE Type_Desc END,
+       [SizeinMB] = CAST( ((SUM(Size)* 8) / 1024.0) AS DECIMAL(18,2) )
+FROM   sys.master_files
+GROUP BY GROUPING SETS ((DB_NAME(database_id), Type_Desc), (DB_NAME(database_id))))A
+PIVOT
+(
+    SUM([SizeinMB])
+    FOR [FileType] IN ([Data], [Log])
+) AS P
+WHERE [Data] IS NOT NULL OR [Log] IS NOT NULL;
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+--TableInformation
+DROP TABLE IF EXISTS #spaceused;
+CREATE TABLE #spaceused (
+      DatabaseName sysname DEFAULT(''),
+      TableName sysname,
+      [Rows] INT ,
+      ReservedSpace VARCHAR(50),
+      DataSpaceUsed VARCHAR(50) , 
+      IndexSpaceUsed VARCHAR(50),
+      UnusedSpace VARCHAR(50)
+      ); 
+
+DECLARE @Cmd VARCHAR(8000);
+SET @Cmd = 'USE [?]; 
+
+IF ''?'' NOT IN (''tempdb'', ''master'', ''model'', ''msdb'')
+BEGIN
+--PRINT ''?''
+DECLARE @InnerCmd VARCHAR(8000)
+SET @InnerCmd = ''
+   EXEC sp_spaceused '''''' + CHAR(63) + ''''''''
+   
+   INSERT INTO #spaceused(TableName, Rows,ReservedSpace,DataSpaceUsed,IndexSpaceUsed,UnusedSpace) 
+   EXEC sp_MSforeachtable @InnerCmd
+   
+   UPDATE #spaceused SET DatabaseName = ''?'' WHERE DatabaseName = ''''
+END
+'
+EXEC sp_MSforeachdb @Cmd;
+
+SELECT DatabaseName as [Database Name],
+	TableName as [Table Name], 
+	[Rows] as [Row Count],
+	CAST(REPLACE(ReservedSpace, ' KB','') as int) as [Reserved Space (KB)],
+	CAST(REPLACE(DataSpaceUsed, ' KB','') as int) as [Data Space Used (KB)],
+	CAST(REPLACE(IndexSpaceUsed, ' KB','') as int) as [Index Space Used (KB)],
+	CAST(REPLACE(UnusedSpace, ' KB','') as int) as [Unused Space (KB)]
+FROM #spaceused;
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+--CurrentConnections
+DROP TABLE IF EXISTS #CurrentConnections;
+CREATE TABLE #CurrentConnections (SPID INT,
+[Status] VARCHAR(50) NULL,
+[Login] SYSNAME NULL,
+[Host Name] SYSNAME NULL,
+[Blocked By] SYSNAME NULL,
+[DB Name] SYSNAME NULL,
+Command VARCHAR(200) NULL,
+[CPU Time] INT NULL,
+[Disk IO] INT NULL,
+[Last Batch] VARCHAR(50) NULL,
+[Program Name] VARCHAR(200) NULL,
+SPID2 INT NULL,
+RequestID INT NULL);
+INSERT INTO #CurrentConnections EXEC sp_who2;
+SELECT * FROM #CurrentConnections;
+
+
+
