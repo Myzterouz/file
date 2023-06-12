@@ -2,3 +2,6 @@ https://marcin.gminski.net/blog/sql-server-performance-dashboard-using-powerbi/
 
 
 https://www.red-gate.com/simple-talk/blogs/monitoring-sql-server-power-bi/
+
+
+https://www.mssqltips.com/sqlservertip/6598/sql-server-agent-monitoring-with-power-bi/
