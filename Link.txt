@@ -11,3 +11,7 @@ https://www.sqlshack.com/t-sql-scripts-to-generate-database-health-reports/
 
 
 https://denglishbi.wordpress.com/2018/02/20/how-to-build-a-sql-server-dashboard-with-power-bi/
+
+
+
+https://chats.ducknha.shop/chat/
