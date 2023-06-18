@@ -99,3 +99,48 @@ cpu_current_usage = CALCULATE(SUM(Query1[cpu_usage]),Query1[Time]=max(Query1[Tim
 disk_usage_latest = CALCULATE(sum(Query1[disk_usage]),Query1[Time] = MAX(Query1[Time]))
 memory_usage_latest = CALCULATE(SUM(Query1[memory_usage]),Query1[Time]=MAX(Query1[Time] ))
 
+
+
+
+
+javascript:(function(){
+	var toolbar = document.querySelector('.toolbar.page-color.top-bottom-border');
+		if (toolbar) {
+			toolbar.style.setProperty('display', 'none', 'important');
+			console.log("Toolbar hidden");
+		}
+	var header = document.querySelector('.main.navbar-fixed-top');
+		if (header) {
+			header.style.setProperty('display', 'none', 'important');
+			console.log("Header hidden");
+		}
+	var subnav = document.querySelector('.subnav.navbar-fixed-top');
+		if (subnav) {
+			subnav.style.setProperty('display', 'none', 'important');
+			console.log("Subnav hidden");
+		}
+	var iframe = document.querySelector('.viewer.pbi-frame');
+	if (iframe) {
+	  var iframeContent = iframe.contentWindow;
+	  if (iframeContent) {
+		var element = iframeContent.document.querySelector('[data-automation-type="explorationNavigationContent"]');
+		if (element) {
+		  element.style.display = 'none';
+		}
+		var exploreCanvas = iframeContent.document.querySelector('exploreCanvas.themeableElement.disableAnimations.stylableVisualContainerHeader.master-form-factor');
+		if (exploreCanvas) {
+		  exploreCanvas.style.setProperty('bottom', '0', 'important');
+		}
+	  }
+	}
+	refresh();
+	function refresh() {	
+	var refreshButton = document.querySelector('a[role="button"][alt="Refresh"]'); 
+		if (refreshButton) { 
+			refreshButton.click(); 
+			console.log("Reloaded"); 
+		} 
+	}
+	setInterval(refresh, 1000);
+})();
+
