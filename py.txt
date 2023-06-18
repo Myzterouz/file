@@ -2,28 +2,29 @@ import psutil
 import time
 import pyodbc
 
-con = pyodbc.connect('Driver={SQL Server};'
-                     'Server=Server1;'
-                     'Database=temp;'
-                     'Trusted_Connection=yes;')
- cursor = con.cursor()
- 
- while 1==1:
+server = 'Myzterouz' 
+database = 'LocalDB' 
+username = 'sa' 
+password = 'Pass1234!' 
+# ENCRYPT defaults to yes starting in ODBC Driver 18. It's good to always specify ENCRYPT=yes on the client side to avoid MITM attacks.
+cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';Trusted_Connection=yes;UID='+username+';PWD='+ password)
+cursor = cnxn.cursor()
+
+while 1==1:
     cpu_usage = psutil.cpu_percent()
     memory_usage = psutil.virtual_memory()[2]
-    
+
     cpu_interrupts = psutil.cpu_stats()[1]
     cpu_calls = psutil.cpu_stats()[3]
-    
+
     memory_used = psutil.virtual_memory()[3]
     memory_free = psutil.virtual_memory()[4]
-    
+
     bytes_sent = psutil.net_io_counters()[0]
     bytes_received = psutil.net_io_counters()[1]
-    
+
     disk_usage = psutil.disk_usage('/')[3]
-    
-    cursor.execute('insert into temp values(getdate(),'
+    cursor.execute('insert into Performance values(getdate(),'
                    + str(cpu_usage) + ','
                    + str(memory_usage) + ','
                    + str(cpu_interrupts) + ','
@@ -34,8 +35,8 @@ con = pyodbc.connect('Driver={SQL Server};'
                    + str(bytes_received) + ','
                    + str(disk_usage) + ')'
                    )
-    con.commit()
-    print('insert into temp values(getdate(),'
+    cnxn.commit()
+    print('insert into Performance values(getdate(),'
            + str(cpu_usage) + ','
            + str(memory_usage) + ','
            + str(cpu_interrupts) + ','
@@ -46,15 +47,7 @@ con = pyodbc.connect('Driver={SQL Server};'
            + str(bytes_received) + ','
            + str(disk_usage) + ')')
     time.sleep(1)
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     
     
