@@ -89,3 +89,13 @@ GO
 
 
 
+
+
+
+
+
+
+cpu_current_usage = CALCULATE(SUM(Query1[cpu_usage]),Query1[Time]=max(Query1[Time]))
+disk_usage_latest = CALCULATE(sum(Query1[disk_usage]),Query1[Time] = MAX(Query1[Time]))
+memory_usage_latest = CALCULATE(SUM(Query1[memory_usage]),Query1[Time]=MAX(Query1[Time] ))
+
