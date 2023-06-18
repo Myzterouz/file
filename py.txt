@@ -100,9 +100,6 @@ disk_usage_latest = CALCULATE(sum(Query1[disk_usage]),Query1[Time] = MAX(Query1[
 memory_usage_latest = CALCULATE(SUM(Query1[memory_usage]),Query1[Time]=MAX(Query1[Time] ))
 
 
-
-
-
 javascript:(function(){
 	var toolbar = document.querySelector('.toolbar.page-color.top-bottom-border');
 		if (toolbar) {
@@ -123,13 +120,15 @@ javascript:(function(){
 	if (iframe) {
 	  var iframeContent = iframe.contentWindow;
 	  if (iframeContent) {
+		var bottom = iframeContent.document.querySelector('div.exploreCanvas.themeableElement.disableAnimations.stylableVisualContainerHeader.master-form-factor');
+		if (bottom) {
+			bottom.style.setProperty('bottom', '0', 'important');
+			console.log("bottom hidden");
+		}
 		var element = iframeContent.document.querySelector('[data-automation-type="explorationNavigationContent"]');
 		if (element) {
-		  element.style.display = 'none';
-		}
-		var exploreCanvas = iframeContent.document.querySelector('exploreCanvas.themeableElement.disableAnimations.stylableVisualContainerHeader.master-form-factor');
-		if (exploreCanvas) {
-		  exploreCanvas.style.setProperty('bottom', '0', 'important');
+			element.style.display = 'none';
+			console.log("element hidden");
 		}
 	  }
 	}
@@ -143,4 +142,3 @@ javascript:(function(){
 	}
 	setInterval(refresh, 1000);
 })();
-
