@@ -46,3 +46,53 @@ con = pyodbc.connect('Driver={SQL Server};'
            + str(bytes_received) + ','
            + str(disk_usage) + ')')
     time.sleep(1)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    USE [LocalDB]
+GO
+
+/****** Object:  Table [dbo].[Performance]    Script Date: 18/06/2023 9:37:04 pm ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Performance](
+	[Time] [datetime] NULL,
+	[cpu_usage] [numeric](5, 2) NULL,
+	[memory_usage] [numeric](5, 2) NULL,
+	[cpu_interrupts] [numeric](18, 0) NULL,
+	[cpu_calls] [numeric](18, 0) NULL,
+	[memory_used] [numeric](18, 0) NULL,
+	[memory_free] [numeric](18, 0) NULL,
+	[bytes_sent] [numeric](18, 0) NULL,
+	[bytes_received] [numeric](18, 0) NULL,
+	[disk_usage] [numeric](5, 2) NULL
+) ON [PRIMARY]
+GO
+
+
+
