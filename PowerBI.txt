@@ -57,3 +57,36 @@ let
     FilteredTable = Table.SelectRows(MergedColumn, each ([Error] <> null))
 in
     FilteredTable
+
+
+
+
+
+
+
+
+let
+    InputCount = Table.Group(RawData, {"Passdate", "Model", "Capa", "Process", "Error"}, {{"InputCount", each Table.RowCount(_), Double.Type}}),
+    OutputCount = Table.Group(Table.SelectRows(RawData, each List.ContainsAny(Record.FieldValues(_), {"000"})), {"Passdate", "Model", "Capa", "Process", "Error"}, {{"OutputCount", each Table.RowCount(_), Double.Type}}),
+    RenameInput =Table.RenameColumns(InputCount,{{"Passdate", "Passdate1"}, {"Model", "Model1"}, {"Capa", "Capa1"}, {"Process", "Process1"}, {"Error", "Error1"}}),
+    YieldTable = Table.Join(RenameInput, {"Passdate1", "Model1", "Capa1", "Process1", "Error1"}, OutputCount, {"Passdate", "Model", "Capa","Process", "Error"}, JoinKind.LeftOuter),
+    Yield = Table.AddColumn(YieldTable, "Yield", each if [InputCount] <> 0 then [OutputCount] / [InputCount] else 0),
+    RenamedInputCount = Table.RenameColumns(InputCount, {"InputCount", "Value"}),
+    RenamedOutputCount = Table.RenameColumns(Yield, {"OutputCount", "Value"}),
+    RenamedYield = Table.RenameColumns(Yield, {"Yield", "Value"}),
+    InputCountWithMode = Table.AddColumn(RenamedInputCount, "Mode", each "Input"),
+    OutputCountWithMode = Table.AddColumn(RenamedOutputCount, "Mode", each "Output"),
+    YieldWithMode = Table.AddColumn(RenamedYield, "Mode", each "Yield"),
+    CombinedTable = Table.Combine({InputCountWithMode, OutputCountWithMode, YieldWithMode}),
+    Final = Table.AddColumn(CombinedTable, "Final", each if [Mode] = "Yield" and [Value] = null then 0 else if [Mode] = "Output" and [Value] = null then 0 else if [Mode] = "Input" and [Value] = null then 0 else [Value],Double.Type),
+    PassdateFixOutput = Table.AddColumn(Final, "PassdateFix", each if [Mode] = "Output" and [Value] = null then [Passdate1] else if [Mode] = "Yield" and [Value] = null then [Passdate1] else [Passdate],Date.Type),
+    ModelFixOutput = Table.AddColumn(PassdateFixOutput, "ModelFix", each if [Mode] = "Output" and [Value] = null then [Model1] else if [Mode] = "Yield" and [Value] = null then [Model1] else [Model],Text.Type),
+    CapaFixOutput = Table.AddColumn(ModelFixOutput, "CapaFix", each if [Mode] = "Output" and [Value] = null then [Capa1] else if [Mode] = "Yield" and [Value] = null then [Capa1] else [Capa],Double.Type),
+    ProcessFixOutput = Table.AddColumn(CapaFixOutput, "ProcessFix", each if [Mode] = "Output" and [Value] = null then [Process1] else if [Mode] = "Yield" and [Value] = null then [Process1] else [Process],Text.Type),
+    ErrorFixOutput = Table.AddColumn(ProcessFixOutput, "ErrorFix", each if [Mode] = "Output" and [Value] = null then [Error1] else if [Mode] = "Yield" and [Value] = null then [Error1] else [Error],Text.Type),
+    SelectColumns = Table.SelectColumns(ErrorFixOutput,{"PassdateFix", "ModelFix", "CapaFix", "ProcessFix", "ErrorFix", "Final", "Mode"}),
+    Rename = Table.RenameColumns(SelectColumns,{{"PassdateFix", "Passdate"}, {"ModelFix", "Model"}, {"CapaFix", "Capa"}, {"ProcessFix", "Process"}, {"ErrorFix", "Error"}, {"Final", "Value"}}),
+    Info = Table.AddColumn(Rename, "Info", each if [Mode] = "Yield" then [Value] * 100 else if [Mode] = "Output" and [Value] = null then 0 else [Value] ,Double.Type),
+    MergedColumn = Table.AddColumn(Info, "Grouping", each Text.Combine({Text.From([Passdate], "en-PH"), [Model], Text.From([Capa], "en-PH"), [Process]}, "_"), type text)
+in
+    MergedColumn
