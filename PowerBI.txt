@@ -19,3 +19,41 @@ let
     MergedColumn = Table.AddColumn(Info, "Grouping", each Text.Combine({Text.From([Passdate], "en-PH"), [Model], Text.From([Capa], "en-PH"), [Process]}, "_"), type text)
 in
     MergedColumn
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let
+    InputCount = Table.Group(RawData, {"Passdate", "Model", "Capa", "Process","Error"}, {{"InputCount", each Table.RowCount(_), Double.Type}}),
+    OutputCount = Table.Group(Table.SelectRows(RawData, each List.ContainsAny(Record.FieldValues(_), {"000"})), {"Passdate", "Model", "Capa", "Process","Error"}, {{"OutputCount", each Table.RowCount(_), Double.Type}}),
+    RenameInputPassdate = Table.RenameColumns(InputCount, {"Passdate", "Passdate1"}),
+    RenameInputModel = Table.RenameColumns(RenameInputPassdate, {"Model", "Model1"}),
+    RenameInputCapa = Table.RenameColumns(RenameInputModel, {"Capa", "Capa1"}),
+    RenameInputProcess = Table.RenameColumns(RenameInputCapa, {"Process", "Process1"}),
+    RenameInputError = Table.RenameColumns(RenameInputProcess, {"Error", "Error1"}),
+    YieldTable = Table.Join(RenameInputError, {"Passdate1", "Model1", "Capa1", "Process1", "Error1"}, OutputCount, {"Passdate", "Model", "Capa","Process","Error"}, JoinKind.LeftOuter),
+    Yield = Table.AddColumn(YieldTable, "Yield", each if [InputCount] <> 0 then [OutputCount] / [InputCount] else null),
+    RenamedInputCount = Table.RenameColumns(InputCount, {"InputCount", "Value"}),
+    RenamedOutputCount = Table.RenameColumns(Yield, {"OutputCount", "Value"}),
+    RenamedYield = Table.RenameColumns(Yield, {"Yield", "Value"}),
+    InputCountWithMode = Table.AddColumn(RenamedInputCount, "Mode", each "Input"),
+    OutputCountWithMode = Table.AddColumn(RenamedOutputCount, "Mode", each "Output"),
+    YieldWithMode = Table.AddColumn(RenamedYield, "Mode", each "Yield"),
+    CombinedTable = Table.Combine({InputCountWithMode, OutputCountWithMode, YieldWithMode}),
+    CleanTable = Table.RemoveColumns(CombinedTable,{"Passdate1", "Model1", "Capa1", "Process1","Error1", "InputCount", "Yield", "OutputCount"}),
+    Info = Table.AddColumn(CleanTable, "Info", each if [Mode] = "Yield" then [Value] * 100 else [Value],Double.Type),
+    MergedColumn = Table.AddColumn(Info, "Grouping", each Text.Combine({Text.From([Passdate], "en-PH"), [Model], Text.From([Capa], "en-PH"), [Process]}, "_"), type text)
+in
+    MergedColumn
