@@ -15,8 +15,7 @@ let
     YieldWithMode = Table.AddColumn(RenamedYield, "Mode", each "Yield"),
     CombinedTable = Table.Combine({InputCountWithMode, OutputCountWithMode, YieldWithMode}),
     CleanTable = Table.RemoveColumns(CombinedTable,{"Passdate1", "Model1", "Capa1", "Process1", "InputCount", "Yield", "OutputCount"}),
-    Info = Table.AddColumn(CleanTable, "Info", each if [Mode] = "Yield" then Text.From(Number.Round([Value] * 100, 1)) & "%" else [Value]),
-    CleanColumnsTable = Table.RemoveColumns(Info,{"Value"}),
-    MergedColumn = Table.AddColumn(CleanColumnsTable, "Grouping", each Text.Combine({Text.From([Passdate], "en-PH"), [Model], Text.From([Capa], "en-PH"), [Process]}, "_"), type text)
+    Info = Table.AddColumn(CleanTable, "Info", each if [Mode] = "Yield" then [Value] * 100 else [Value],Double.Type),
+    MergedColumn = Table.AddColumn(Info, "Grouping", each Text.Combine({Text.From([Passdate], "en-PH"), [Model], Text.From([Capa], "en-PH"), [Process]}, "_"), type text)
 in
     MergedColumn
