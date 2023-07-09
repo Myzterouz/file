@@ -2,7 +2,7 @@ Yield =
 VAR ONEPASS = CALCULATE(PRODUCT(Yield_tbl[Passrate]),ALL(Yield_tbl),Yield_tbl[CAPA] IN VALUES(Yield_tbl[CAPA]),Yield_tbl[Process] <> "1PASS",Yield_tbl[Process] <> "TARGET",Yield_tbl[Process] <> "RESULT")
 VAR CNT = CALCULATE(COUNTBLANK(Yield_tbl[Passrate]),ALL(Yield_tbl),Yield_tbl[CAPA] IN VALUES(Yield_tbl[CAPA]),Yield_tbl[Process] <> "1PASS",Yield_tbl[Process] <> "TARGET",Yield_tbl[Process] <> "RESULT")
 VAR TARGET = CALCULATE(LOOKUPVALUE(Target_tbl[Target],Target_tbl[Capacity],MAX(Yield_tbl[Capacity])))
-VAR RESULT = IF(CNT > 0,"NO COMPLETE 1PASS",IF(ONEPASS>=TARGET,"TARGET ACHIEVED","TARGET NOT ACHIEVED"))
+VAR RESULT = IF(CNT > 0,"NO COMPLETE 1PASS",IF(ONEPASS>=TARGET,"ACHIEVED","NOT ACHIEVED"))
 RETURN
 IF(
     MAX(Yield_tbl[Process]) = "1PASS",
