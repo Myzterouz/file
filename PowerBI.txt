@@ -1,3 +1,171 @@
+Yield = 
+VAR ONEPASS = CALCULATE(PRODUCT(Yield_tbl[Passrate]),ALL(Yield_tbl),Yield_tbl[CAPA] IN VALUES(Yield_tbl[CAPA]),Yield_tbl[Process] <> "1PASS",Yield_tbl[Process] <> "TARGET",Yield_tbl[Process] <> "RESULT")
+VAR CNT = CALCULATE(COUNTBLANK(Yield_tbl[Passrate]),ALL(Yield_tbl),Yield_tbl[CAPA] IN VALUES(Yield_tbl[CAPA]),Yield_tbl[Process] <> "1PASS",Yield_tbl[Process] <> "TARGET",Yield_tbl[Process] <> "RESULT")
+VAR TARGET = CALCULATE(LOOKUPVALUE(Target_tbl[Target],Target_tbl[Capacity],MAX(Yield_tbl[Capacity])))
+VAR RESULT = IF(CNT > 0,"NO COMPLETE 1PASS",IF(ONEPASS>=TARGET,"TARGET ACHIEVED","TARGET NOT ACHIEVED"))
+RETURN
+IF(
+    MAX(Yield_tbl[Process]) = "1PASS",
+    IF(
+        CNT > 0,
+        0,
+        ONEPASS
+    ),
+    IF(
+        MAX(Yield_tbl[Process]) = "TARGET",
+        TARGET,
+        IF(
+            MAX(Yield_tbl[Process]) = "RESULT",
+            RESULT,
+            PRODUCT(Yield_tbl[Passrate])
+        )
+    )
+)
+
+
+BK_Flag = 
+VAR ONEPASS = CALCULATE(PRODUCT(Yield_tbl[Passrate]),ALL(Yield_tbl),Yield_tbl[CAPA] IN VALUES(Yield_tbl[CAPA]),Yield_tbl[Process] <> "1PASS",Yield_tbl[Process] <> "TARGET",Yield_tbl[Process] <> "RESULT")
+VAR CNT = CALCULATE(COUNTBLANK(Yield_tbl[Passrate]),ALL(Yield_tbl),Yield_tbl[CAPA] IN VALUES(Yield_tbl[CAPA]),Yield_tbl[Process] <> "1PASS",Yield_tbl[Process] <> "TARGET",Yield_tbl[Process] <> "RESULT")
+VAR TARGET = CALCULATE(LOOKUPVALUE(Target_tbl[Target],Target_tbl[Capacity],MAX(Yield_tbl[Capacity])))
+VAR RESULT = IF(CNT > 0,1,IF(ONEPASS>=TARGET,3,2))
+RETURN
+IF(
+    MAX(Yield_tbl[Process]) = "1PASS",
+    0,
+    IF(
+        MAX(Yield_tbl[Process]) = "TARGET",
+        0,
+        IF(
+            MAX(Yield_tbl[Process]) = "RESULT",
+            RESULT,
+            0
+        )
+    )
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 let
     InputCount = Table.Group(RawData, {"Passdate", "Model", "Capa", "Process"}, {{"InputCount", each Table.RowCount(_), Double.Type}}),
     OutputCount = Table.Group(Table.SelectRows(RawData, each List.ContainsAny(Record.FieldValues(_), {"000"})), {"Passdate", "Model", "Capa", "Process"}, {{"OutputCount", each Table.RowCount(_), Double.Type}}),
