@@ -2,3 +2,7 @@ https://community.fabric.microsoft.com/t5/Themes-Gallery/bd-p/ThemesGallery
 
 
 https://coolors.co/palettes
+
+https://app.swaggerhub.com/apis/microsoft-rs/PBIRS/2.0#/DataSets/UpdateDatasetProperties
+
+https://bgjar.com/
